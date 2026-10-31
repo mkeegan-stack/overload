@@ -949,7 +949,23 @@ const G3={bench:{gz:18},incline:{gz:17},floorpress:{gz:16},machinePress:{gz:15},
  plank:{cam:35},deadBug:{cam:30},calf:{fz:6},lunge:{fz:6},rlunge:{fz:6},splitSquat:{fz:6},stepup:{fz:6},kneeRaise:{cam:40},legRaise:{cam:40},benchDip:{gz:12}};
 const BBBACK=['lunge','rlunge','splitSquat','stepup','calf','squatDb'];
 const spec3=k=>A3[k]||ANIMS[k];
-function pose3(k,ph,ex){let A=spec3(k);const G=G3[k]||{},n=(ex.n||'').toLowerCase();let P=alerp(A.A,A.B,aphase(ph,A.hold));
+// rep rhythm: slow controlled lowering, a short pause, a strong drive, then a lockout or a squeeze.
+// ECC_FIRST: pose A is the top, so the rep starts by lowering. PEAK: the muscle works hardest at the end of the lift, so it holds a squeeze there.
+const ECC_FIRST=new Set(['squatBar','squatFront','goblet','squat','squatDb','rdl','slrdl','bench','floorpress','pushup','declinePU','inclinePU','pike','splitSquat','lunge','rlunge','skull','benchDip']);
+const PEAK=new Set(['curl','hammer','lateral','fly','flySeat','flyLying','flyIncline','rearFly','pullApart','faceP','legCurl','legExt','calf','bridge','slbridge','hipthrust','bentRow','dbRow','seatedRow','invRow','bandRow','doorRow','pullup','latPulldown','bandPulldown','pushdown','ohExt','cableCrunch','kneeRaise','deadBug']);
+const TCACHE={};
+function tempoOf(k){if(k in TCACHE)return TCACHE[k];const A=spec3(k)||{};if(A.hold||k=='swing')return TCACHE[k]=null;
+ const peak=PEAK.has(k),T=k=='calf'?{c:.65,h:.55,e:1.15,p:.3}:peak?{c:1.0,h:.6,e:1.9,p:.3}:{c:1.1,h:.7,e:2.0,p:.35};
+ const seq=ECC_FIRST.has(k)?[['e',0,1,T.e],['p',1,1,T.p],['c',1,0,T.c],['h',0,0,T.h]]:[['c',0,1,T.c],['h',1,1,T.h],['e',1,0,T.e],['p',0,0,T.p]];
+ return TCACHE[k]={seq,dur:seq.reduce((a,x)=>a+x[3],0),peak}}
+const easeIO=t=>(1-Math.cos(Math.PI*t))/2,drive=t=>(1-Math.cos(Math.PI*Math.pow(t,.72)))/2;
+// where the rep is (x: 0 = pose A, 1 = pose B) and how hard the main muscles are working (e: 0 to 1)
+function trep(k,ph){const tp=tempoOf(k);if(!tp)return null;let t=(((ph%1)+1)%1)*tp.dur;
+ for(let i=0;i<4;i++){const [m,a,b,d]=tp.seq[i];if(t>d&&i<3){t-=d;continue}const u=clamp(t/d,0,1),x=a+(b-a)*(m=='e'?easeIO(u):m=='c'?drive(u):0);let e;
+  if(tp.peak)e=m=='c'?.35+.65*easeIO(u):m=='h'?1:m=='e'?1-.55*u:.4;
+  else e=m=='e'?.3+.32*u:m=='p'?.65:m=='c'?(u<.5?.65+.35*u/.5:u<.8?1:1-.68*(u-.8)/.2):.3;
+  return{x,e,m}}}
+function pose3(k,ph,ex){let A=spec3(k);const G=G3[k]||{},n=(ex.n||'').toLowerCase(),tr=trep(k,ph);let P=alerp(A.A,A.B,tr?tr.x:aphase(ph,A.hold));
  const bbBack=ex.k=='bb'&&BBBACK.includes(k);
  if(bbBack){A={...A,rel:1};P={...P,hr:undefined,h:undefined,hp:undefined,u:200,f:12}}
  const J=apose(A,P),v3=(p,z)=>[p[0],AG-p[1],z];
@@ -996,7 +1012,7 @@ async function loadGLB(src){const T=THREE,buf=await src(),dv=new DataView(buf);i
 function init3(){if(R3.ok)return true;try{const T=THREE,c=document.createElement('canvas');c.className='anim3';const r=new T.WebGLRenderer({canvas:c,antialias:true,alpha:true});
   r.setPixelRatio(Math.min(2,devicePixelRatio||1));r.shadowMap.enabled=true;r.shadowMap.type=T.PCFSoftShadowMap;Object.assign(R3,{T,c,r,scene:new T.Scene(),cam:new T.PerspectiveCamera(30,4/3,1,2000),pool:{},az:30,el:14,ok:true});
   R3.geo={cyl:new T.CylinderGeometry(1,1,1,18),ball:new T.SphereGeometry(1,20,14),box:new T.BoxGeometry(1,1,1)};
-  R3.hemi=new T.HemisphereLight(0xffffff,0x444444,.62);R3.dir=new T.DirectionalLight(0xffffff,1.25);R3.dir.position.set(70,140,110);R3.dir.castShadow=true;R3.dir.shadow.mapSize.set(1024,1024);R3.dir.shadow.bias=-.0006;R3.dir.shadow.normalBias=.4;R3.dir.shadow.radius=4;R3.scene.add(R3.hemi,R3.dir,R3.dir.target,new T.AmbientLight(0xffffff,.18));
+  R3.hemi=new T.HemisphereLight(0xffffff,0x444444,.62);R3.dir=new T.DirectionalLight(0xffffff,1.25);R3.dir.position.set(70,140,110);R3.dir.castShadow=true;R3.dir.shadow.mapSize.set(1024,1024);R3.dir.shadow.bias=-.0006;R3.dir.shadow.normalBias=.4;R3.dir.shadow.radius=4;R3.rim=new T.DirectionalLight(0xcfe0ff,.7);R3.rim.position.set(-110,90,-130);R3.scene.add(R3.hemi,R3.dir,R3.dir.target,R3.rim,new T.AmbientLight(0xffffff,.16));
   // gym floor: rubber tiles that fade out towards the edges
   R3.floor=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshStandardMaterial({roughness:.95,transparent:true,depthWrite:false}));R3.floor.rotation.x=-Math.PI/2;R3.floor.receiveShadow=true;R3.floor.renderOrder=-1;R3.scene.add(R3.floor);
   const drag={};c.addEventListener('pointerdown',e=>{drag.on=1;drag.x=e.clientX;drag.y=e.clientY;try{c.setPointerCapture(e.pointerId)}catch(x){}});
@@ -1148,13 +1164,13 @@ function setupModel3(sc){const T=R3.T,root=new T.Group(),hold=new T.Group();hold
  const meshes=[];sc.traverse(n=>{if(n.isSkinnedMesh){n.frustumCulled=false;meshes.push(n)}});
  const surf=meshes.find(m=>/Surface/.test(m.name))||meshes[0],joints=meshes.find(m=>m!==surf);
  R3.M={root,hold,sc,B,list,rest,s,surf,joints,armQ:list[0].parent.getWorldQuaternion(new T.Quaternion())};
- classify3(surf,B);surf.material=new T.MeshStandardMaterial({vertexColors:true,roughness:.55,metalness:.05});surf.castShadow=true;if(joints)joints.castShadow=true;
- if(joints)joints.material=new T.MeshStandardMaterial({color:0x444444,roughness:.6})}
+ classify3(surf,B);surf.material=new T.MeshStandardMaterial({vertexColors:true,roughness:.5,metalness:.04});surf.castShadow=true;if(joints)joints.castShadow=true;
+ if(joints)joints.material=new T.MeshStandardMaterial({color:0x9aa1aa,roughness:.55})}
 // sort every vertex of the body into a muscle region, using the bone that moves it most and which side of that bone it sits on (rest pose, facing +Z, left +X)
 function classify3(mesh,B){const T=R3.T,g=mesh.geometry,P=g.attributes.position,J=g.attributes.skinIndex,Wt=g.attributes.skinWeight,sk=mesh.skeleton,n=P.count;
  const bp=sk.bones.map((b,i)=>new T.Vector3().setFromMatrixPosition(new T.Matrix4().copy(sk.boneInverses[i]).invert()));const bn=sk.bones.map(b=>b.name.replace(/^mixamorig:?/,''));
  const idx=nm=>bn.indexOf(nm),pos=nm=>bp[idx(nm)];const hipY=(pos('LeftUpLeg').y+pos('RightUpLeg').y)/2,armY=(pos('LeftArm').y+pos('RightArm').y)/2,hw=Math.abs(pos('LeftArm').x);
- const ctr=pos('Spine1').z,reg=new Uint8Array(n),RID={};const ids=['','chest','abs','obliques','lats','upback','lowback','traps','delts','rdelt','biceps','triceps','forearms','glutes','quads','hams','calves'];ids.forEach((k,i)=>RID[k]=i);
+ const ctr=pos('Spine1').z,reg=new Uint8Array(n),cloth=new Uint8Array(n),RID={};const ids=['','chest','abs','obliques','lats','upback','lowback','traps','delts','rdelt','biceps','triceps','forearms','glutes','quads','hams','calves'];ids.forEach((k,i)=>RID[k]=i);
  const child={LeftArm:'LeftForeArm',RightArm:'RightForeArm',LeftUpLeg:'LeftLeg',RightUpLeg:'RightLeg',LeftLeg:'LeftFoot',RightLeg:'RightFoot',LeftForeArm:'LeftHand',RightForeArm:'RightHand'};
  const v=new T.Vector3();
  for(let i=0;i<n;i++){v.fromBufferAttribute(P,i);let bi=0,bw=-1;const ws=[Wt.getX(i),Wt.getY(i),Wt.getZ(i),Wt.getW(i)],js=[J.getX(i),J.getY(i),J.getZ(i),J.getW(i)];for(let c=0;c<4;c++){if(ws[c]>bw){bw=ws[c];bi=js[c]}}const name=bn[bi]||'';let r='';
@@ -1166,14 +1182,20 @@ function classify3(mesh,B){const T=R3.T,g=mesh.geometry,P=g.attributes.position,
    if(/Neck|Shoulder/.test(name))r=(fw<.02*(armY-hipY)||v.y>armY)?'traps':(yr>.8?'chest':'');
    else if(fw>=0){r=yr>.64?'chest':yr>.12?(sd<.42?'abs':'obliques'):''}
    else{r=yr>.86&&sd<.4?'traps':yr>.58&&sd<.36?'upback':yr>.4&&sd>=.3?'lats':yr>.1?'lowback':'glutes'}}
-  reg[i]=RID[r]||0}
- R3.reg=reg;R3.RIDS=ids;g.setAttribute('color',new T.Float32BufferAttribute(new Float32Array(n*3),3))}
-function colors3(id){const M=R3.M;if(!M)return;const T=R3.T,cs=getComputedStyle(document.documentElement),gv=v=>new T.Color(cs.getPropertyValue(v).trim()||'#888');
- const base=gv('--man'),red=gv('--red'),fade=red.clone().lerp(base,.55),m=musc(id),C=M.surf.geometry.attributes.color,show=R3.showM!==false;const main=[];
- for(let i=0;i<R3.reg.length;i++){const k=R3.RIDS[R3.reg[i]];const c=show&&k&&m.p.includes(k)?(main.push(i),red):show&&k&&m.s.includes(k)?fade:base;C.setXYZ(i,c.r,c.g,c.b)}
- C.needsUpdate=true;R3.main=main;R3.red=red;R3.jm=M.joints&&M.joints.material.color.set(gv('--mut')).multiplyScalar(.55)}
-function pulse3(ph){if(!R3.main||!R3.main.length)return;const C=R3.M.surf.geometry.attributes.color,k=.78+.42*aphase(ph,(spec3(R3.cur.k)||{}).hold),r=R3.red;
- for(const i of R3.main)C.setXYZ(i,Math.min(1,r.r*k),Math.min(1,r.g*k),Math.min(1,r.b*k));C.needsUpdate=true}
+  reg[i]=RID[r]||0;
+  if(/Foot|Toe/.test(name))cloth[i]=2;else if(name=='Hips'&&(v.y-hipY)/(armY-hipY)<.13)cloth[i]=1;else if(/UpLeg/.test(name)){const a=pos(name),b=pos(child[name]);if(v.clone().sub(a).dot(b.clone().sub(a))/b.distanceToSquared(a)<.42)cloth[i]=1}}
+ R3.reg=reg;R3.cloth=cloth;R3.RIDS=ids;g.setAttribute('color',new T.Float32BufferAttribute(new Float32Array(n*3),3))}
+function colors3(id){const M=R3.M;if(!M||!R3.cloth)return;const T=R3.T,cs=getComputedStyle(document.documentElement),gv=v=>new T.Color(cs.getPropertyValue(v).trim()||'#888');
+ const dark=R3.floorDark!==false,base=gv('--man'),red=gv('--red'),shorts=new T.Color(dark?'#2c3139':'#3b4149'),shoe=new T.Color(dark?'#1b1e23':'#2a2e34'),m=musc(id),C=M.surf.geometry.attributes.color,show=R3.showM!==false,n=R3.reg.length,rest=new Float32Array(n*3),main=[],sec=[];
+ for(let i=0;i<n;i++){const cl=R3.cloth[i],c=cl==1?shorts:cl==2?shoe:base;rest[i*3]=c.r;rest[i*3+1]=c.g;rest[i*3+2]=c.b;C.setXYZ(i,c.r,c.g,c.b);
+  const k=R3.RIDS[R3.reg[i]];if(show&&k&&m.p.includes(k))main.push(i);else if(show&&k&&m.s.includes(k))sec.push(i)}
+ R3.main=main;R3.sec=sec;R3.rest=rest;R3.red=red;C.needsUpdate=true;
+ if(M.joints)M.joints.material.color.copy(base).multiplyScalar(dark?.72:.86);
+ pulse3(ANI&&ANI.pp!=null?ANI.pp:.5)}
+function pulse3(ph){const M=R3.M;if(!M||!R3.rest||!R3.cur)return;const C=M.surf.geometry.attributes.color,A=spec3(R3.cur.k)||{},tr=trep(R3.cur.k,ph);
+ const e=tr?tr.e:A.hold?.82+.1*Math.sin(ph*2*Math.PI):aphase(ph,A.hold),r=R3.red,hot=[Math.min(1.45,r.r*1.32),r.g*1.15,r.b*1.15],R=R3.rest;
+ const paint=(list,lo,hi)=>{const t=lo+(hi-lo)*e;for(const i of list){const j=i*3;C.setXYZ(i,R[j]+(hot[0]-R[j])*t,R[j+1]+(hot[1]-R[j+1])*t,R[j+2]+(hot[2]-R[j+2])*t)}};
+ paint(R3.main,.38,1);paint(R3.sec,.16,.48);C.needsUpdate=true}
 function poseModel3(o){const M=R3.M,T=R3.T,F=frames3(o),tgt={};
  const set=(nm,D,R)=>{tgt[nm]=[D.clone().normalize(),R]};
  // the pelvis sits between the torso and the thighs, so it doesn't twist when the body folds
@@ -1219,7 +1241,7 @@ XLIB.forEach(x=>{const same=LIB.find(e=>AMAP[e.id]==x.anim&&e.k==x.k)||LIB.find(
 ['dbr','kbr','kbp','srdl'].forEach(id=>{if(EX[id])EX[id].one=1});
 let ANI=null;
 function animSVG(id){return`<svg class="anim" viewBox="${(ANIMS[animKey(id)]||{}).vb||'0 0 160 120'}" role="img" aria-label="Animation of ${H(EX[id].n)}" id="animSvg">${aframe(id,.46,wtypeOf(id))}</svg>`}
-function animStart(id){animStop();const k=animKey(id);if(!k)return;const dur=((spec3(k)||{}).dur||ANIMS[k].dur||2.8)*1000,t0=performance.now(),wt=wtypeOf(id);
+function animStart(id){animStop();const k=animKey(id);if(!k)return;const tp=tempoOf(k),dur=(tp?tp.dur:((spec3(k)||{}).dur||ANIMS[k].dur||2.8))*1000,t0=performance.now(),wt=wtypeOf(id);
  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const me={id,playing:!reduce,t0,dur,wt,pp:.46,mode:'2d'};ANI=me;
  const step=now=>{if(ANI!==me)return;const el=me.mode=='3d'?R3.c:document.getElementById('animSvg');if(!el||!el.isConnected){ANI=null;return}
   if(me.playing){const p=((now-me.t0)%me.dur)/me.dur;me.pp=p;if(me.mode=='3d'){try{draw3(p)}catch(e){me.mode='2d';const b=$('#gvBox');if(b)b.innerHTML=animSVG(id)}}else el.innerHTML=aframe(id,p,wt)}me.raf=requestAnimationFrame(step)};
