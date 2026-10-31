@@ -1165,7 +1165,7 @@ function setupModel3(sc){const T=R3.T,root=new T.Group(),hold=new T.Group();hold
  const surf=meshes.find(m=>/Surface/.test(m.name))||meshes[0],joints=meshes.find(m=>m!==surf);
  R3.M={root,hold,sc,B,list,rest,s,surf,joints,armQ:list[0].parent.getWorldQuaternion(new T.Quaternion())};
  classify3(surf,B);surf.material=new T.MeshStandardMaterial({vertexColors:true,roughness:.5,metalness:.04});surf.castShadow=true;if(joints)joints.castShadow=true;
- if(joints)joints.material=new T.MeshStandardMaterial({color:0x9aa1aa,roughness:.55})}
+ if(joints)joints.material=new T.MeshStandardMaterial({color:0xb8bec6,roughness:.5,metalness:.04})}
 // sort every vertex of the body into a muscle region, using the bone that moves it most and which side of that bone it sits on (rest pose, facing +Z, left +X)
 function classify3(mesh,B){const T=R3.T,g=mesh.geometry,P=g.attributes.position,J=g.attributes.skinIndex,Wt=g.attributes.skinWeight,sk=mesh.skeleton,n=P.count;
  const bp=sk.bones.map((b,i)=>new T.Vector3().setFromMatrixPosition(new T.Matrix4().copy(sk.boneInverses[i]).invert()));const bn=sk.bones.map(b=>b.name.replace(/^mixamorig:?/,''));
@@ -1187,15 +1187,15 @@ function classify3(mesh,B){const T=R3.T,g=mesh.geometry,P=g.attributes.position,
  R3.reg=reg;R3.cloth=cloth;R3.RIDS=ids;g.setAttribute('color',new T.Float32BufferAttribute(new Float32Array(n*3),3))}
 function colors3(id){const M=R3.M;if(!M||!R3.cloth)return;const T=R3.T,cs=getComputedStyle(document.documentElement),gv=v=>new T.Color(cs.getPropertyValue(v).trim()||'#888');
  const dark=R3.floorDark!==false,base=gv('--man'),red=gv('--red'),shorts=new T.Color(dark?'#2c3139':'#3b4149'),shoe=new T.Color(dark?'#1b1e23':'#2a2e34'),m=musc(id),C=M.surf.geometry.attributes.color,show=R3.showM!==false,n=R3.reg.length,rest=new Float32Array(n*3),main=[],sec=[];
- for(let i=0;i<n;i++){const cl=R3.cloth[i],c=cl==1?shorts:cl==2?shoe:base;rest[i*3]=c.r;rest[i*3+1]=c.g;rest[i*3+2]=c.b;C.setXYZ(i,c.r,c.g,c.b);
+ for(let i=0;i<n;i++){const c=base;rest[i*3]=c.r;rest[i*3+1]=c.g;rest[i*3+2]=c.b;C.setXYZ(i,c.r,c.g,c.b);
   const k=R3.RIDS[R3.reg[i]];if(show&&k&&m.p.includes(k))main.push(i);else if(show&&k&&m.s.includes(k))sec.push(i)}
  R3.main=main;R3.sec=sec;R3.rest=rest;R3.red=red;C.needsUpdate=true;
- if(M.joints)M.joints.material.color.copy(base).multiplyScalar(dark?.72:.86);
+ if(M.joints)M.joints.material.color.copy(base).multiplyScalar(dark?.9:.94);
  pulse3(ANI&&ANI.pp!=null?ANI.pp:.5)}
 function pulse3(ph){const M=R3.M;if(!M||!R3.rest||!R3.cur)return;const C=M.surf.geometry.attributes.color,A=spec3(R3.cur.k)||{},tr=trep(R3.cur.k,ph);
  const e=tr?tr.e:A.hold?.82+.1*Math.sin(ph*2*Math.PI):aphase(ph,A.hold),r=R3.red,hot=[Math.min(1.45,r.r*1.32),r.g*1.15,r.b*1.15],R=R3.rest;
  const paint=(list,lo,hi)=>{const t=lo+(hi-lo)*e;for(const i of list){const j=i*3;C.setXYZ(i,R[j]+(hot[0]-R[j])*t,R[j+1]+(hot[1]-R[j+1])*t,R[j+2]+(hot[2]-R[j+2])*t)}};
- paint(R3.main,.38,1);paint(R3.sec,.16,.48);C.needsUpdate=true}
+ paint(R3.main,.78,1);paint(R3.sec,.42,.6);C.needsUpdate=true}
 function poseModel3(o){const M=R3.M,T=R3.T,F=frames3(o),tgt={};
  const set=(nm,D,R)=>{tgt[nm]=[D.clone().normalize(),R]};
  // the pelvis sits between the torso and the thighs, so it doesn't twist when the body folds
