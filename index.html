@@ -530,6 +530,27 @@ div.opt::after{display:none}div.opt{padding-right:0}
 .nxi,.pli{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
 .nxi .th,.pli .th{width:38px;height:42px;margin-left:-4px}
 .exh{grid-template-columns:auto auto minmax(0,1fr) auto}.exh .th{margin-top:2px}
+body.lnd{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+.land .lhero{position:relative;min-height:420px;margin:0 -20px;padding:60px 20px 0;overflow:hidden}
+.land .lhero .gp{position:absolute;right:-160px;top:150px;width:330px;height:330px}
+.gp .rim,.land .gp .rim{fill:var(--surf)}
+.land .lt{position:relative}.land .lt p{width:190px}
+.land .lt h1{font:900 76px/.84 var(--fd);text-transform:uppercase;margin-top:6px}
+.land .lt p{color:var(--mut);margin-top:14px;font-size:15px}
+.lbox{position:relative;padding:26px 0 24px}
+.lbox::before{content:"";position:absolute;left:-20px;right:-20px;top:0;height:6px;background:var(--rub)}
+.lbox h2{font-size:36px}
+.lsteps{list-style:none;counter-reset:st;padding:0;margin:20px 0 0;display:grid;gap:0}
+.lsteps li{counter-increment:st;display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;padding:14px 0;border-top:1px solid var(--line);font-size:15.5px;line-height:1.5}
+.lsteps li:last-child{border-bottom:1px solid var(--line)}
+.lsteps li::before{content:counter(st);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:900 20px var(--fd);color:#fff;background:linear-gradient(135deg,var(--red),var(--red2))}
+.lsteps li:last-child::before{background:none;border:2px dashed var(--red2);color:var(--fg)}
+.lsteps b{font-weight:800}
+.lk{display:inline-flex;align-items:center;gap:6px;vertical-align:-6px;padding:3px 9px;border-radius:10px;background:var(--surf2);border:1px solid var(--line);font-size:14px;white-space:nowrap}
+.lk svg{width:18px;height:18px;color:var(--blue)}.lk b{font-weight:700}
+.lqr{margin-top:18px}
+.lfoot{display:grid;gap:14px;justify-items:center;padding:22px 0 10px}
+.lfoot .link{color:var(--mut);font-size:14px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -1472,6 +1493,7 @@ const syncWarn=()=>!DEMO&&NOSYNC?`<section class="card" style="border-color:var(
 const demoBar=()=>DEMO?`<div class="demo"><span>You're looking at demo data. Nothing is saved.</span><button class="btn pri sm" onclick="exitDemo()">Set up mine</button></div>`:'';
 const numU=h=>h.replace(/(<b class="num[^"]*">)([^<]+?)\s(kg|lb|reps|s|min|wk|km)(<\/b>)/g,'$1$2<small>$3</small>$4');
 function render(){applyTheme();const app=$('#app'),nav=$('#nav');
+ if(landing()){app.innerHTML=landingHTML();nav.hidden=true;$('#timer').hidden=true;document.body.classList.add('lnd');requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off});landQR();return}document.body.classList.remove('lnd');
  if(!ST&&!WIZ)WIZ=newWiz(false);
  document.body.classList.toggle('wk',VIEW=='workout'&&!!ACT&&!WIZ);
  if(WIZ){app.innerHTML=(WIZ.step==0&&!WIZ.edit?syncWarn()+installCard(1):'')+wizHTML();nav.hidden=true;$('#timer').hidden=true;return}
@@ -1800,7 +1822,7 @@ async function importPlanGo(){try{offerPlan(await readCode($('#ipc').value))}cat
 const isIOSBrowser=()=>navigator.standalone===false;
 async function planHash(){const m=location.hash.match(/plan=([A-Za-z0-9_-]+)/);if(!m)return;const code=m[1];try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
  let o;try{o=await readCode(code)}catch(e){toast("That plan link doesn't work. Ask for a new one.");return}
- if(!ST||WIZ){try{localStorage.setItem('overload.pend',code)}catch(e){}if(isIOSBrowser())inAppHint(code,o);return}
+ if(!ST||WIZ){try{localStorage.setItem('overload.pend',code)}catch(e){}if(landing()){render();return}if(isIOSBrowser())inAppHint(code,o);return}
  if(isIOSBrowser())inAppHint(code,o,1);else offerPlan(o)}
 function inAppHint(code,o,here){openSheet(`<div class="stack"><div><div class="eyebrow">Shared plan</div><h2>${H(o.n||'A plan')}</h2></div>
  <p class="mut">If you use Overload from your Home Screen, add it there: copy the link, open the app, then go to Plan → Plans → Import a plan.</p>
@@ -1810,12 +1832,12 @@ function pendPlan(){let c=null;try{c=localStorage.getItem('overload.pend');local
 
 // ---------- getting Overload onto someone's Home Screen ----------
 let BIP=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();BIP=e;if(WIZ||VIEW=='today')render()});
-addEventListener('appinstalled',()=>{BIP=null;toast('Overload is on your Home Screen');render()});
+addEventListener('appinstalled',()=>{BIP=null;UI.installed=1;toast('Overload is on your Home Screen');render()});
 const isSA=()=>navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
 const isIOS=()=>/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform=='MacIntel'&&navigator.maxTouchPoints>1);
 const isAndroid=()=>/Android/i.test(navigator.userAgent);
 const APPURL=()=>location.origin+location.pathname;
-function installCard(force){if(!STANDALONE||isSA())return'';if(!force){try{if(localStorage.getItem('overload.noinst'))return''}catch(e){}}
+function installCard(force){if(!STANDALONE||isSA()||webOK())return'';if(!force){try{if(localStorage.getItem('overload.noinst'))return''}catch(e){}}
  return`<section class="card inst"><div class="hd"><h3>Add Overload to your Home Screen</h3>${force?'':`<button class="ib" aria-label="Hide this" onclick="hideInst()">${IC.x}</button>`}</div>${installSteps()}</section>`}
 function installSteps(){if(BIP)return`<p class="mut">It opens full screen like any other app and works without signal.</p><button class="btn pri full" style="margin-top:12px" onclick="doInstall()">Install Overload</button>`;
  if(isIOS())return`<ol class="steps"><li>In Safari, tap <b>···</b> beside the address bar, or the Share button</li><li>Tap <b>Share</b>, scroll down and tap <b>Add to Home Screen</b></li><li>Leave <b>Open as Web App</b> on, then tap <b>Add</b></li></ol><p class="hint" style="margin-top:8px">Set up your profile in the Home Screen app, not here. The two keep separate data.</p>`;
@@ -1836,6 +1858,42 @@ async function appQR(){try{await loadQR()}catch(e){toast("Couldn't load the QR c
 function backGuard(){if(!isSA()||isIOS())return;try{history.pushState({g:1},'')}catch(e){return}
  addEventListener('popstate',()=>{let done=true;if(!$('#sheet').hidden)closeSheet();else if(WIZ&&WIZ.step>0)wzBack();else if(VIEW!='today'&&VIEW!='workout')go('today');else done=false;
   if(done)try{history.pushState({g:1},'')}catch(e){}})}
+
+// ---------- opened in a browser: a page that shows how to add it to the Home Screen ----------
+const UA=navigator.userAgent;
+function platform(){if(isIOS()){if(/FBAN|FBAV|Instagram|Snapchat|musical_ly|TikTok|Line\/|LinkedInApp|Twitter|GSA\//.test(UA))return'ios-inapp';if(/CriOS|FxiOS|EdgiOS|OPiOS/.test(UA))return'ios-other';return'ios'}
+ if(isAndroid()){if(/SamsungBrowser/.test(UA))return'samsung';if(/Firefox/.test(UA))return'and-ff';if(/; wv\)|FBAN|FBAV|Instagram/.test(UA))return'and-inapp';return'android'}return'desktop'}
+const webOK=()=>{try{return localStorage.getItem('overload.web')=='1'}catch(e){return false}};
+function useWeb(){try{localStorage.setItem('overload.web','1')}catch(e){}render();scrollTo(0,0)}
+const landing=()=>STANDALONE&&!isSA()&&!ST&&!DEMO&&!webOK();
+const LI={share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>',
+ add:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+ dots:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+ vdots:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>',
+ burger:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+ safari:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="currentColor"/></svg>',
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="3"/><rect x="8.5" y="6" width="3" height="3" rx=".8"/><rect x="12.5" y="6" width="3" height="3" rx=".8"/><rect x="8.5" y="10" width="3" height="3" rx=".8" fill="currentColor"/></svg>'};
+const key=(ic,t)=>`<span class="lk">${LI[ic]}${t?`<b>${t}</b>`:''}</span>`;
+function landSteps(){const pf=platform(),open=`Open <b>Overload</b> from your Home Screen. That's the app, and it's where your data lives.`;
+ const S={
+  ios:[`Tap ${key('dots')} beside the address bar, then ${key('share','Share')}. On older iPhones the ${key('share')} button sits in the bar at the bottom.`,`Scroll down the list and tap ${key('add','Add to Home Screen')}.`,`Leave <b>Open as Web App</b> switched on, then tap <b>Add</b>.`,open],
+  'ios-other':[`Tap ${key('share','Share')} in the address bar.`,`Scroll down and tap ${key('add','Add to Home Screen')}, then <b>Add</b>.`,open],
+  'ios-inapp':[`This page is open inside another app, which can't add to the Home Screen. Tap ${key('dots')} or ${key('safari')} and choose <b>Open in Safari</b>.`,`In Safari, tap ${key('dots')} then ${key('share','Share')}, and choose ${key('add','Add to Home Screen')}.`,`Tap <b>Add</b>.`,open],
+  android:[BIP?`Tap <b>Install Overload</b> below.`:`Tap the menu ${key('vdots')} at the top right.`,BIP?`Confirm with <b>Install</b>.`:`Tap <b>Add to Home screen</b> or <b>Install app</b>, then <b>Install</b>.`,open],
+  samsung:[`Tap the menu ${key('burger')} at the bottom right.`,`Tap <b>Add page to</b>, then <b>Home screen</b>.`,open],
+  'and-ff':[`Tap the menu ${key('vdots')}.`,`Tap <b>Add app to Home screen</b> or <b>Install</b>.`,open],
+  'and-inapp':[`This page is open inside another app. Tap ${key('vdots')} and choose <b>Open in Chrome</b> (or your browser).`,`In Chrome, tap ${key('vdots')} then <b>Add to Home screen</b>.`,open]};
+ if(pf=='desktop')return`<div class="lqr" id="lqr"></div><p class="mut" style="text-align:center;margin-top:12px">Overload is made for your phone. Point its camera at this code, then follow the steps it shows.</p>`;
+ return`<ol class="lsteps">${S[pf].map(t=>`<li><span>${t}</span></li>`).join('')}</ol>${pf=='android'&&BIP?`<button class="gobtn" onclick="doInstall()"><i></i>Install Overload</button>`:''}`}
+function landingHTML(){const pf=platform(),m=location.hash.match(/plan=([A-Za-z0-9_-]+)/)||(()=>{try{const c=localStorage.getItem('overload.pend');return c?[0,c]:null}catch(e){return null}})();
+ const R=80,C=2*Math.PI*R;let k='';for(let i=0;i<60;i++){const a=i/60*Math.PI*2;k+=`<line class="rk" x1="${(100+Math.cos(a)*94).toFixed(1)}" y1="${(100+Math.sin(a)*94).toFixed(1)}" x2="${(100+Math.cos(a)*97).toFixed(1)}" y2="${(100+Math.sin(a)*97).toFixed(1)}"/>`}
+ return`<div class="land"><div class="lhero"><svg class="gp" viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="lpg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red2)"/></linearGradient><path id="lpr" d="M100 100m-87 0a87 87 0 1 1 174 0a87 87 0 1 1-174 0"/></defs><circle class="rim" cx="100" cy="100" r="99"/>${k}<text><textPath href="#lpr">PICK A GOAL  ·  THEN BEAT IT  ·  OVERLOAD  ·  </textPath></text><circle class="tr" cx="100" cy="100" r="${R}"/><circle class="pl-p" cx="100" cy="100" r="${R}" stroke="url(#lpg)" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C*.3).toFixed(1)}" transform="rotate(180 100 100)"/><circle class="hub" cx="100" cy="100" r="24"/><circle class="hole" cx="100" cy="100" r="10"/></svg>
+  <div class="lt"><div class="eyebrow">Free gym app</div><h1>Overload</h1><p>A training plan built around your kit and your body. Every session gives you a number to beat.</p></div></div>
+ ${UI.installed?`<section class="lbox"><h2>It's on your Home Screen</h2><p class="mut" style="margin-top:8px">Close this page and open <b style="color:var(--fg)">Overload</b> from your Home Screen to set it up.</p></section>`:
+ `<section class="lbox"><h2>${pf=='desktop'?'Get it on your phone':'Add it to your Home Screen'}</h2>${pf=='desktop'?'':`<p class="mut" style="margin-top:8px">It then opens full screen like any other app, works without signal, and keeps your data on your phone.</p>`}${landSteps()}</section>`}
+ ${m&&pf!='desktop'?`<section class="lbox lplan"><h3>Someone shared a plan with you</h3><p class="mut" style="margin-top:6px">Copy the link now. Once Overload is set up, go to Plan, then Plans, then Import a shared plan, and paste it.</p><button class="btn sec full" style="margin-top:12px" onclick="navigator.clipboard.writeText(planLink('${m[1]}')).then(()=>toast('Link copied')).catch(()=>toast('Copy the address from the bar above'))">Copy plan link</button></section>`:''}
+ <div class="lfoot"><button class="link" onclick="useWeb()">Use it in this browser instead</button><button class="link" onclick="startDemo()">Look around with demo data</button></div></div>`}
+async function landQR(){const el=$('#lqr');if(!el)return;try{await loadQR();el.innerHTML=qrSVG(APPURL())}catch(e){el.innerHTML=`<p class="mut" style="text-align:center">${H(APPURL())}</p>`}}
 
 function newActive(di){const day=ST.plan.days[di];return{id:uid(),day:di,n:day.n,start:Date.now(),
  items:day.items.map((it,pi)=>{const t=dlAdjust(it,targetFor(it));return{...clone(it),pi,t,wu:warmFor(it,t),sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))}}),
