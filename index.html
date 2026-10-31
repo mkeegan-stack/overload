@@ -7,6 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Overload">
+<meta name="description" content="A free gym app that builds a plan around your kit and pushes you to beat every session.">
+<meta property="og:type" content="website"><meta property="og:title" content="Overload"><meta property="og:description" content="A free gym app that builds a plan around your kit. Pick a goal. Then beat it.">
+<meta property="og:url" content="https://mkeegan-stack.github.io/overload/"><meta property="og:image" content="https://mkeegan-stack.github.io/overload/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#0f1114">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -32,26 +36,26 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;overscroll-behavior-y:none}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<style>#boot{position:fixed;inset:0;z-index:99999;pointer-events:none}
-#bw{position:absolute;left:50%;top:44%;width:41vw;height:41vw;transform:translate(-50%,-50%)}
-#bh{position:absolute;left:50%;top:50%;width:22.4vw;height:22.4vw;margin:-11.2vw 0 0 -11.2vw;border-radius:50%;background:#0f1114;box-shadow:0 0 0 300vmax #0f1114}
-#bw svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-#bk line{stroke:#2e333a;stroke-width:1.1}#boot.run #bk line{animation:bk .28s ease-out forwards}
+<style id="olBootCss">#olBoot{position:fixed;inset:0;z-index:99999;pointer-events:none}
+#olW{position:absolute;left:50%;top:44%;width:41vw;height:41vw;transform:translate(-50%,-50%)}
+#olH{position:absolute;left:50%;top:50%;width:22.4vw;height:22.4vw;margin:-11.2vw 0 0 -11.2vw;border-radius:50%;background:#0f1114;box-shadow:0 0 0 300vmax #0f1114}
+#olW svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#olK line{stroke:#2e333a;stroke-width:1.1}#olBoot.run #olK line{animation:bk .28s ease-out forwards}
 @keyframes bk{to{stroke:var(--c);stroke-width:1.7}}
-#br{transform-origin:50px 50px}#boot.run #br{animation:br 1.15s cubic-bezier(.25,.75,.2,1) forwards}
+#olR{transform-origin:50px 50px}#olBoot.run #olR{animation:br 1.15s cubic-bezier(.25,.75,.2,1) forwards}
 @keyframes br{to{transform:rotate(360deg)}}
-#bu{transform-origin:50px 50px}#boot.run #bu{animation:bu 1.15s ease-in-out}
+#olU{transform-origin:50px 50px}#olBoot.run #olU{animation:bu 1.15s ease-in-out}
 @keyframes bu{40%{transform:scale(1.25)}}
 .bt{position:absolute;left:0;right:0;text-align:center;transition:opacity .2s,transform .3s}
-#boot.go .bt{opacity:0;transform:translateY(3vw)}
-#boot.go #bh{background:transparent}
-#boot.go #bu{opacity:0;transition:opacity .12s}
-#boot.go #bw{transition:transform .62s cubic-bezier(.55,0,.85,.35);transform:translate(-50%,-50%) scale(16)}
-#boot.go #bk line{opacity:0;transition:opacity .2s}
-@media (prefers-reduced-motion:reduce){#boot.run #bk line,#boot.run #br,#boot.run #bu{animation:none}#boot.go #bw{transform:translate(-50%,-50%)}#boot.go{opacity:0;transition:opacity .3s}}
-</style><div id="boot"><div id="bw"><div id="bh"></div><svg viewBox="-10 -10 120 120"><defs><linearGradient id="bg1"><stop offset="0" stop-color="#ff5141"/><stop offset="1" stop-color="#ff8f3a"/></linearGradient></defs><g id="bk"><line style="--c:#ff8f3a;animation-delay:318ms" x1="105.00" y1="50.00" x2="108.50" y2="50.00"/><line style="--c:#ff8e3a;animation-delay:340ms" x1="104.16" y1="59.55" x2="107.61" y2="60.16"/><line style="--c:#ff8d3a;animation-delay:362ms" x1="101.68" y1="68.81" x2="104.97" y2="70.01"/><line style="--c:#ff8a3a;animation-delay:384ms" x1="97.63" y1="77.50" x2="100.66" y2="79.25"/><line style="--c:#ff873a;animation-delay:406ms" x1="92.13" y1="85.35" x2="94.81" y2="87.60"/><line style="--c:#ff833b;animation-delay:428ms" x1="85.35" y1="92.13" x2="87.60" y2="94.81"/><line style="--c:#ff7f3b;animation-delay:450ms" x1="77.50" y1="97.63" x2="79.25" y2="100.66"/><line style="--c:#ff7a3c;animation-delay:472ms" x1="68.81" y1="101.68" x2="70.01" y2="104.97"/><line style="--c:#ff753c;animation-delay:494ms" x1="59.55" y1="104.16" x2="60.16" y2="107.61"/><line style="--c:#ff703d;animation-delay:516ms" x1="50.00" y1="105.00" x2="50.00" y2="108.50"/><line style="--c:#ff6a3e;animation-delay:538ms" x1="40.45" y1="104.16" x2="39.84" y2="107.61"/><line style="--c:#ff653e;animation-delay:560ms" x1="31.19" y1="101.68" x2="29.99" y2="104.97"/><line style="--c:#ff603f;animation-delay:582ms" x1="22.50" y1="97.63" x2="20.75" y2="100.66"/><line style="--c:#ff5c3f;animation-delay:604ms" x1="14.65" y1="92.13" x2="12.40" y2="94.81"/><line style="--c:#ff5840;animation-delay:626ms" x1="7.87" y1="85.35" x2="5.19" y2="87.60"/><line style="--c:#ff5540;animation-delay:648ms" x1="2.37" y1="77.50" x2="-0.66" y2="79.25"/><line style="--c:#ff5240;animation-delay:670ms" x1="-1.68" y1="68.81" x2="-4.97" y2="70.01"/><line style="--c:#ff5140;animation-delay:692ms" x1="-4.16" y1="59.55" x2="-7.61" y2="60.16"/><line style="--c:#ff5141;animation-delay:714ms" x1="-5.00" y1="50.00" x2="-8.50" y2="50.00"/><line style="--c:#ff5140;animation-delay:736ms" x1="-4.16" y1="40.45" x2="-7.61" y2="39.84"/><line style="--c:#ff5240;animation-delay:758ms" x1="-1.68" y1="31.19" x2="-4.97" y2="29.99"/><line style="--c:#ff5540;animation-delay:780ms" x1="2.37" y1="22.50" x2="-0.66" y2="20.75"/><line style="--c:#ff5840;animation-delay:802ms" x1="7.87" y1="14.65" x2="5.19" y2="12.40"/><line style="--c:#ff5c3f;animation-delay:824ms" x1="14.65" y1="7.87" x2="12.40" y2="5.19"/><line style="--c:#ff603f;animation-delay:846ms" x1="22.50" y1="2.37" x2="20.75" y2="-0.66"/><line style="--c:#ff653e;animation-delay:868ms" x1="31.19" y1="-1.68" x2="29.99" y2="-4.97"/><line style="--c:#ff6a3e;animation-delay:890ms" x1="40.45" y1="-4.16" x2="39.84" y2="-7.61"/><line style="--c:#ff703d;animation-delay:120ms" x1="50.00" y1="-5.00" x2="50.00" y2="-8.50"/><line style="--c:#ff753c;animation-delay:142ms" x1="59.55" y1="-4.16" x2="60.16" y2="-7.61"/><line style="--c:#ff7a3c;animation-delay:164ms" x1="68.81" y1="-1.68" x2="70.01" y2="-4.97"/><line style="--c:#ff7f3b;animation-delay:186ms" x1="77.50" y1="2.37" x2="79.25" y2="-0.66"/><line style="--c:#ff833b;animation-delay:208ms" x1="85.35" y1="7.87" x2="87.60" y2="5.19"/><line style="--c:#ff873a;animation-delay:230ms" x1="92.13" y1="14.65" x2="94.81" y2="12.40"/><line style="--c:#ff8a3a;animation-delay:252ms" x1="97.63" y1="22.50" x2="100.66" y2="20.75"/><line style="--c:#ff8d3a;animation-delay:274ms" x1="101.68" y1="31.19" x2="104.97" y2="29.99"/><line style="--c:#ff8e3a;animation-delay:296ms" x1="104.16" y1="40.45" x2="107.61" y2="39.84"/></g><path id="br" fill="url(#bg1)" fill-rule="evenodd" d="M0 50a50 50 0 1 0 100 0a50 50 0 1 0-100 0M18 50a32 32 0 1 0 64 0a32 32 0 1 0-64 0"/><circle id="bu" cx="50" cy="50" r="10.5" fill="#22262c"/></svg></div><div class="bt" style="top:calc(44% + 24.6vw);font:900 13vw/1.2 'Big Shoulders Display',sans-serif;color:#eef1f4">OVERLOAD</div><div class="bt" style="top:calc(44% + 42vw);font:600 4vw/1.2 Figtree,sans-serif;color:#8f98a3;transition-delay:.04s">Pick a goal. Then beat it.</div></div>
-<script>(function(){var b=document.getElementById('boot'),sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;if(!sa){b.remove();return}
-var done=0;function go(){if(done++)return;requestAnimationFrame(function(){requestAnimationFrame(function(){b.classList.add('run');setTimeout(function(){b.classList.add('go');setTimeout(function(){b.remove()},720)},1300)})})}
+#olBoot.go .bt{opacity:0;transform:translateY(3vw)}
+#olBoot.go #olH{background:transparent}
+#olBoot.go #olU{opacity:0;transition:opacity .12s}
+#olBoot.go #olW{transition:transform .62s cubic-bezier(.55,0,.85,.35);transform:translate(-50%,-50%) scale(16)}
+#olBoot.go #olK line{opacity:0;transition:opacity .2s}
+@media (prefers-reduced-motion:reduce){#olBoot.run #olK line,#olBoot.run #olR,#olBoot.run #olU{animation:none}#olBoot.go #olW{transform:translate(-50%,-50%)}#olBoot.go{opacity:0;transition:opacity .3s}}
+</style><div id="olBoot"><div id="olW"><div id="olH"></div><svg viewBox="-10 -10 120 120"><defs><linearGradient id="olG"><stop offset="0" stop-color="#ff5141"/><stop offset="1" stop-color="#ff8f3a"/></linearGradient></defs><g id="olK"><line style="--c:#ff8f3a;animation-delay:318ms" x1="105.00" y1="50.00" x2="108.50" y2="50.00"/><line style="--c:#ff8e3a;animation-delay:340ms" x1="104.16" y1="59.55" x2="107.61" y2="60.16"/><line style="--c:#ff8d3a;animation-delay:362ms" x1="101.68" y1="68.81" x2="104.97" y2="70.01"/><line style="--c:#ff8a3a;animation-delay:384ms" x1="97.63" y1="77.50" x2="100.66" y2="79.25"/><line style="--c:#ff873a;animation-delay:406ms" x1="92.13" y1="85.35" x2="94.81" y2="87.60"/><line style="--c:#ff833b;animation-delay:428ms" x1="85.35" y1="92.13" x2="87.60" y2="94.81"/><line style="--c:#ff7f3b;animation-delay:450ms" x1="77.50" y1="97.63" x2="79.25" y2="100.66"/><line style="--c:#ff7a3c;animation-delay:472ms" x1="68.81" y1="101.68" x2="70.01" y2="104.97"/><line style="--c:#ff753c;animation-delay:494ms" x1="59.55" y1="104.16" x2="60.16" y2="107.61"/><line style="--c:#ff703d;animation-delay:516ms" x1="50.00" y1="105.00" x2="50.00" y2="108.50"/><line style="--c:#ff6a3e;animation-delay:538ms" x1="40.45" y1="104.16" x2="39.84" y2="107.61"/><line style="--c:#ff653e;animation-delay:560ms" x1="31.19" y1="101.68" x2="29.99" y2="104.97"/><line style="--c:#ff603f;animation-delay:582ms" x1="22.50" y1="97.63" x2="20.75" y2="100.66"/><line style="--c:#ff5c3f;animation-delay:604ms" x1="14.65" y1="92.13" x2="12.40" y2="94.81"/><line style="--c:#ff5840;animation-delay:626ms" x1="7.87" y1="85.35" x2="5.19" y2="87.60"/><line style="--c:#ff5540;animation-delay:648ms" x1="2.37" y1="77.50" x2="-0.66" y2="79.25"/><line style="--c:#ff5240;animation-delay:670ms" x1="-1.68" y1="68.81" x2="-4.97" y2="70.01"/><line style="--c:#ff5140;animation-delay:692ms" x1="-4.16" y1="59.55" x2="-7.61" y2="60.16"/><line style="--c:#ff5141;animation-delay:714ms" x1="-5.00" y1="50.00" x2="-8.50" y2="50.00"/><line style="--c:#ff5140;animation-delay:736ms" x1="-4.16" y1="40.45" x2="-7.61" y2="39.84"/><line style="--c:#ff5240;animation-delay:758ms" x1="-1.68" y1="31.19" x2="-4.97" y2="29.99"/><line style="--c:#ff5540;animation-delay:780ms" x1="2.37" y1="22.50" x2="-0.66" y2="20.75"/><line style="--c:#ff5840;animation-delay:802ms" x1="7.87" y1="14.65" x2="5.19" y2="12.40"/><line style="--c:#ff5c3f;animation-delay:824ms" x1="14.65" y1="7.87" x2="12.40" y2="5.19"/><line style="--c:#ff603f;animation-delay:846ms" x1="22.50" y1="2.37" x2="20.75" y2="-0.66"/><line style="--c:#ff653e;animation-delay:868ms" x1="31.19" y1="-1.68" x2="29.99" y2="-4.97"/><line style="--c:#ff6a3e;animation-delay:890ms" x1="40.45" y1="-4.16" x2="39.84" y2="-7.61"/><line style="--c:#ff703d;animation-delay:120ms" x1="50.00" y1="-5.00" x2="50.00" y2="-8.50"/><line style="--c:#ff753c;animation-delay:142ms" x1="59.55" y1="-4.16" x2="60.16" y2="-7.61"/><line style="--c:#ff7a3c;animation-delay:164ms" x1="68.81" y1="-1.68" x2="70.01" y2="-4.97"/><line style="--c:#ff7f3b;animation-delay:186ms" x1="77.50" y1="2.37" x2="79.25" y2="-0.66"/><line style="--c:#ff833b;animation-delay:208ms" x1="85.35" y1="7.87" x2="87.60" y2="5.19"/><line style="--c:#ff873a;animation-delay:230ms" x1="92.13" y1="14.65" x2="94.81" y2="12.40"/><line style="--c:#ff8a3a;animation-delay:252ms" x1="97.63" y1="22.50" x2="100.66" y2="20.75"/><line style="--c:#ff8d3a;animation-delay:274ms" x1="101.68" y1="31.19" x2="104.97" y2="29.99"/><line style="--c:#ff8e3a;animation-delay:296ms" x1="104.16" y1="40.45" x2="107.61" y2="39.84"/></g><path id="olR" fill="url(#olG)" fill-rule="evenodd" d="M0 50a50 50 0 1 0 100 0a50 50 0 1 0-100 0M18 50a32 32 0 1 0 64 0a32 32 0 1 0-64 0"/><circle id="olU" cx="50" cy="50" r="10.5" fill="#22262c"/></svg></div><div class="bt" style="top:calc(44% + 24.6vw);font:900 13vw/1.2 'Big Shoulders Display',sans-serif;color:#eef1f4">OVERLOAD</div><div class="bt" style="top:calc(44% + 42vw);font:600 4vw/1.2 Figtree,sans-serif;color:#8f98a3;transition-delay:.04s">Pick a goal. Then beat it.</div></div>
+<script>(function(){var b=document.getElementById('olBoot'),sa=navigator.standalone||matchMedia('(display-mode: standalone)').matches;if(!sa){b.remove();var c=document.getElementById('olBootCss');if(c)c.remove();return}
+var done=0;function go(){if(done++)return;requestAnimationFrame(function(){requestAnimationFrame(function(){b.classList.add('run');setTimeout(function(){b.classList.add('go');setTimeout(function(){b.remove();var c=document.getElementById('olBootCss');if(c)c.remove()},720)},1300)})})}
 if(document.readyState=='complete')go();else addEventListener('load',go);setTimeout(go,4000)})();</script>
 <style>
 /* fonts ship with the app (SIL Open Font License, see fonts/) so it looks right offline */
@@ -87,6 +91,7 @@ body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;min-he
 input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
 img.keep{-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
 .ssc{border-left:3px solid var(--red)}
+.steps{margin:4px 0 0;padding-left:22px;display:grid;gap:8px;color:var(--fg)}.steps b{font-weight:800}
 .chip.mini{min-height:32px;padding:4px 12px;font-size:12.5px}
 h1,h2,h3{font-family:var(--fd);margin:0;text-wrap:balance;letter-spacing:.01em;line-height:1.02}
 h2{font-size:24px;font-weight:800;text-transform:uppercase}
@@ -1233,11 +1238,11 @@ const demoBar=()=>DEMO?`<div class="demo"><span>You're looking at demo data. Not
 function render(){applyTheme();const app=$('#app'),nav=$('#nav');
  if(!ST&&!WIZ)WIZ=newWiz(false);
  document.body.classList.toggle('wk',VIEW=='workout'&&!!ACT&&!WIZ);
- if(WIZ){app.innerHTML=(WIZ.step==0&&!WIZ.edit?syncWarn():'')+wizHTML();nav.hidden=true;$('#timer').hidden=true;return}
+ if(WIZ){app.innerHTML=(WIZ.step==0&&!WIZ.edit?syncWarn()+installCard(1):'')+wizHTML();nav.hidden=true;$('#timer').hidden=true;return}
  if(VIEW=='workout'&&!ACT)VIEW='today';
  if(VIEW=='workout'){app.innerHTML=workoutHTML();nav.hidden=true;tickRest();return}
  nav.hidden=false;$('#navIn').innerHTML=navHTML();$('#timer').hidden=true;
- app.innerHTML=demoBar()+(VIEW=='today'||VIEW=='me'?syncWarn():'')+({today:todayHTML,plan:planHTML,log:logHTML,progress:progHTML,me:meHTML}[VIEW]||todayHTML)();
+ app.innerHTML=demoBar()+(VIEW=='today'||VIEW=='me'?syncWarn():'')+(VIEW=='today'?installCard():'')+({today:todayHTML,plan:planHTML,log:logHTML,progress:progHTML,me:meHTML}[VIEW]||todayHTML)();
  if(VIEW=='progress'&&UI.ptab=='body')photoRender();else photoClear();
  requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off})}
 
@@ -1564,6 +1569,35 @@ function inAppHint(code,o,here){openSheet(`<div class="stack"><div><div class="e
  ${here?`<button class="btn sec full" onclick="readCode('${code}').then(offerPlan)">Add it here in Safari instead</button>`:''}<button class="btn ghost full" onclick="closeSheet()">Close</button></div>`)}
 function pendPlan(){let c=null;try{c=localStorage.getItem('overload.pend');localStorage.removeItem('overload.pend')}catch(e){}if(c&&ST)readCode(c).then(offerPlan).catch(()=>{})}
 
+// ---------- getting Overload onto someone's Home Screen ----------
+let BIP=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();BIP=e;if(WIZ||VIEW=='today')render()});
+addEventListener('appinstalled',()=>{BIP=null;toast('Overload is on your Home Screen');render()});
+const isSA=()=>navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+const isIOS=()=>/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform=='MacIntel'&&navigator.maxTouchPoints>1);
+const isAndroid=()=>/Android/i.test(navigator.userAgent);
+const APPURL=()=>location.origin+location.pathname;
+function installCard(force){if(!STANDALONE||isSA())return'';if(!force){try{if(localStorage.getItem('overload.noinst'))return''}catch(e){}}
+ return`<section class="card inst"><div class="hd"><h3>Add Overload to your Home Screen</h3>${force?'':`<button class="ib" aria-label="Hide this" onclick="hideInst()">${IC.x}</button>`}</div>${installSteps()}</section>`}
+function installSteps(){if(BIP)return`<p class="mut">It opens full screen like any other app and works without signal.</p><button class="btn pri full" style="margin-top:12px" onclick="doInstall()">Install Overload</button>`;
+ if(isIOS())return`<ol class="steps"><li>In Safari, tap <b>···</b> beside the address bar, or the Share button</li><li>Tap <b>Share</b>, scroll down and tap <b>Add to Home Screen</b></li><li>Leave <b>Open as Web App</b> on, then tap <b>Add</b></li></ol><p class="hint" style="margin-top:8px">Set up your profile in the Home Screen app, not here. The two keep separate data.</p>`;
+ if(isAndroid())return`<ol class="steps"><li>Tap the browser menu <b>⋮</b></li><li>Tap <b>Install app</b> or <b>Add to Home screen</b></li></ol>`;
+ return`<p class="mut">Open this page on your phone to add it to your Home Screen.</p>`}
+async function doInstall(){const e=BIP;if(!e)return;try{e.prompt();await e.userChoice}catch(x){}BIP=null;render()}
+function hideInst(){try{localStorage.setItem('overload.noinst','1')}catch(e){}render()}
+// ---------- sharing the app ----------
+async function shareApp(){const url=APPURL();
+ try{if(navigator.share){await navigator.share({title:'Overload',text:'Overload is a free gym app that builds a plan around your kit and pushes you to beat every session. Open the link, then add it to your Home Screen.',url});return}}catch(e){if(e&&e.name=='AbortError')return}
+ try{await navigator.clipboard.writeText(url);toast('Link copied')}catch(e){toast(url)}}
+let QRL=null;const loadQR=()=>QRL||(QRL=new Promise((res,rej)=>{if(window.qrcode)return res();const s=document.createElement('script');s.src='vendor/qrcode.js';s.onload=res;s.onerror=()=>{QRL=null;rej()};document.head.appendChild(s)}));
+function qrSVG(t){const q=qrcode(0,'M');q.addData(t);q.make();const n=q.getModuleCount(),m=3;let d='';for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))d+=`M${c+m} ${r+m}h1v1h-1z`;
+ return`<svg viewBox="0 0 ${n+2*m} ${n+2*m}" shape-rendering="crispEdges" role="img" aria-label="QR code for the Overload link" style="width:100%;max-width:250px;background:#fff;border-radius:16px;display:block;margin:0 auto"><path d="${d}" fill="#0f1114"/></svg>`}
+async function appQR(){try{await loadQR()}catch(e){toast("Couldn't load the QR code. Try again with signal.");return}
+ openSheet(`<div class="stack"><div><div class="eyebrow">Share Overload</div><h2>Scan to get the app</h2></div>${qrSVG(APPURL())}<p class="mut" style="text-align:center">Point their phone's camera at this. Overload opens with the steps to add it to their Home Screen.</p><button class="btn pri full" onclick="shareApp()">Send a link instead</button><button class="btn ghost full" onclick="closeSheet()">Close</button></div>`)}
+// ---------- Android back button: close sheets and step back instead of quitting ----------
+function backGuard(){if(!isSA()||isIOS())return;try{history.pushState({g:1},'')}catch(e){return}
+ addEventListener('popstate',()=>{let done=true;if(!$('#sheet').hidden)closeSheet();else if(WIZ&&WIZ.step>0)wzBack();else if(VIEW!='today'&&VIEW!='workout')go('today');else done=false;
+  if(done)try{history.pushState({g:1},'')}catch(e){}})}
+
 function newActive(di){const day=ST.plan.days[di];return{id:uid(),day:di,n:day.n,start:Date.now(),
  items:day.items.map((it,pi)=>{const t=dlAdjust(it,targetFor(it));return{...clone(it),pi,t,wu:warmFor(it,t),sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))}}),
  cardio:day.cardio?{type:day.cardio.type,min:day.cardio.min,km:'',done:0}:null,notes:''}}
@@ -1847,6 +1881,7 @@ function meHTML(){const p=ST.profile,g=ST.goal,sx={m:'Male',f:'Female',x:''}[p.s
  <div class="row sp"><span style="font-weight:600">Ask how the last set felt</span><button class="sw" role="switch" aria-checked="${ST.settings.eff!==false}" aria-label="Ask how the last set felt" onclick="ST.settings.eff=ST.settings.eff===false;persist('core');render()"></button></div>
  <div class="row sp"><span style="font-weight:600">Rest timer sound</span><button class="sw" role="switch" aria-checked="${ST.settings.sound}" aria-label="Rest timer sound" onclick="ST.settings.sound=!ST.settings.sound;persist('core');render()"></button></div>
  <div class="row sp"><span style="font-weight:600">Rest timer vibration</span><button class="sw" role="switch" aria-checked="${ST.settings.vib}" aria-label="Rest timer vibration" onclick="ST.settings.vib=!ST.settings.vib;persist('core');render()"></button></div></section>
+ <section class="card stack"><h3>Share Overload</h3><p class="hint">Send it to a friend. It's free, and their data stays on their own phone.</p><div class="grid2"><button class="btn sec" onclick="shareApp()">Send a link</button><button class="btn sec" onclick="appQR()">Show QR code</button></div></section>
  <section class="card stack"><h3>Your data</h3><p class="hint">${DEMO?'Demo mode. Nothing is saved.':STANDALONE?'Saved on this phone. Export a backup now and then, and use it to move your data to a new phone.':NOSYNC?'Kept in this browser only. Export a backup regularly.':SYNC=='cloud'?'Saved to your Claude account and on this phone. It stays private to you.':'Saved on this phone. Export a backup now and then so you never lose your history.'}</p>
  <button class="btn sec full" onclick="exportData()">Export backup</button><button class="btn sec full" onclick="$('#impFile').click()">Import backup</button><p class="hint">Progress photos stay on this phone and aren't included in backups.</p>
  ${UI.conf=='reset'?`<div class="stack" style="gap:8px"><p class="warn">This deletes your profile, plan, history and records everywhere. It can't be undone.</p><div class="grid2"><button class="btn pri" onclick="resetAll()">Delete everything</button><button class="btn sec" onclick="UI.conf=null;render()">Cancel</button></div></div>`:`<button class="btn dang full" onclick="UI.conf='reset';render()">Reset everything</button>`}</section>
@@ -1991,7 +2026,7 @@ function startDemo(){DEMO=true;WIZ=null;const t=today();let seed=7;const rnd=()=
 function exitDemo(){DEMO=false;ST=null;ACT=null;REST=null;WIZ=newWiz(false);VIEW='today';loadLocal();if(ST)WIZ=null;render();scrollTo(0,0)}
 
 // ---------- boot ----------
-loadLocal();if(ACT){VIEW='workout';wake()}render();connect();planHash();addEventListener('hashchange',planHash);
+loadLocal();if(ACT){VIEW='workout';wake()}render();connect();planHash();addEventListener('hashchange',planHash);backGuard();
 document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',applyTheme);
 </script>
