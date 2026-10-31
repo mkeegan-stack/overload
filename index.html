@@ -10,17 +10,31 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1320x2868.png">
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1290x2796.png">
+<link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1206x2622.png">
+<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1179x2556.png">
+<link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1284x2778.png">
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1170x2532.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1125x2436.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1242x2688.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/launch-828x1792.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/launch-1242x2208.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/launch-750x1334.png">
+<link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/launch-640x1136.png">
+<title>Overload</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#0f1114">
+<link rel="preload" href="fonts/BigShouldersDisplay.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/Figtree.woff" as="font" type="font/woff" crossorigin>
 <script>window.OVERLOAD_STANDALONE=true;if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;overscroll-behavior-y:none}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Overload</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<meta name="theme-color" content="#0f1114">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
+/* fonts ship with the app (SIL Open Font License, see fonts/) so it looks right offline */
+@font-face{font-family:"Big Shoulders Display";src:url("fonts/BigShouldersDisplay.woff") format("woff");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Figtree";src:url("fonts/Figtree.woff") format("woff");font-weight:300 900;font-display:swap}
 /* Layout: one phone-width column, bottom tab bar, plate-ring hero; bumper-plate colours code the data (red = goal, blue = body, yellow = records, green = done) */
 :root{
  --bg:#0f1114;--surf:#181b20;--surf2:#22262c;--line:#2e333a;--fg:#eef1f4;--mut:#8f98a3;
@@ -240,6 +254,11 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--mut);font-weight:700;min
 .anim .ah{fill:var(--mut)}.anim .ahole{fill:var(--surf2)}.anim .ahdo{stroke:var(--surf2);stroke-width:2}
 .anim .acab{stroke:var(--mut);stroke-width:1.2;fill:none}
 .anim .aband{stroke:var(--red2);stroke-width:1.6;stroke-dasharray:3 2;fill:none}
+.set.wu .na{color:var(--mut)}.set.wu .sn{font-size:12px}
+.phg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ph{position:relative;display:block;border-radius:12px;overflow:hidden;background:var(--surf2);aspect-ratio:3/4;max-width:100%}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph span{position:absolute;left:6px;bottom:6px;font-size:11px;font-weight:800;color:#fff;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:999px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -425,7 +444,7 @@ hkr:['Hang from a bar with straight arms.|Lift your knees towards your chest by 
 ccr:['Kneel in front of a high cable holding a rope beside your head.|Crunch down by curling your ribs towards your hips.|Return slowly.','Your hips stay still. The movement is all in your spine.'],
 spk:['Lie on your side and prop yourself on one forearm, elbow under your shoulder.|Lift your hips so your body is straight from head to feet.|Hold for the target time, then switch sides.','Bend your bottom knee to make it easier.']};
 // body map: one figure 100 wide; left-side shapes are mirrored for the right
-function figSVG(id,big){const m=musc(id),c=k=>'fm'+(m.p.includes(k)?' p1':m.s.includes(k)?' p2':'');
+function figSVG(id,big,heat){const m=musc(id),c=k=>heat?(heat[k]?'fm" style="fill:'+heat[k]:'fm'):'fm'+(m.p.includes(k)?' p1':m.s.includes(k)?' p2':'');
  const base=`<circle class="fb" cx="50" cy="14" r="10"/><rect class="fb" x="45.5" y="22" width="9" height="11" rx="3"/><path class="fb" d="M32 33Q50 28 68 33L71 46L66 62L64 92L68 113L32 113L36 92L34 62L29 46Z"/>`;
  const limb=`<path class="fl" d="M29 40L23.5 78" stroke-width="10"/><path class="fl" d="M23.5 78L18.5 114" stroke-width="8"/><circle class="fb" cx="18" cy="119" r="4"/><path class="fl" d="M42 112L41.5 155" stroke-width="15"/><path class="fl" d="M41.5 155L41 189" stroke-width="10"/><ellipse class="fb" cx="40" cy="193" rx="5.5" ry="3"/>`;
  const arm=k=>`<ellipse class="${c(k)}" cx="25.8" cy="60" rx="4.3" ry="12.5" transform="rotate(8 25.8 60)"/><ellipse class="${c('forearms')}" cx="20.9" cy="96" rx="3.4" ry="13.5" transform="rotate(8 20.9 96)"/>`;
@@ -651,7 +670,7 @@ function pose3(k,ph,ex){let A=spec3(k);const G=G3[k]||{},n=(ex.n||'').toLowerCas
   const mn=Math.min(...keys.map(q=>o[q][1]));keys.forEach(q=>o[q][1]-=mn-2.5)}
  return o}
 let T3P=null;const R3={};
-function load3(){if(window.THREE)return Promise.resolve();if(!T3P)T3P=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js';
+function load3(){if(window.THREE)return Promise.resolve();if(!T3P)T3P=new Promise((ok,no)=>{const s=document.createElement('script');s.src='vendor/three.min.js';
  s.onload=()=>window.THREE?ok():no();s.onerror=()=>{T3P=null;no()};document.head.appendChild(s)});return T3P}
 // minimal reader for the one model file this app ships (binary glTF: nodes, skinned meshes, skin; no textures or animation)
 function modelBytes(){return new Promise((ok,no)=>{if(window.XBOT_GLB)return ok();const sc=document.createElement('script');sc.src='xbot.js';sc.onload=()=>window.XBOT_GLB?ok():no(new Error('model missing'));sc.onerror=no;document.head.appendChild(sc)})
@@ -671,19 +690,30 @@ async function loadGLB(src){const T=THREE,buf=await src(),dv=new DataView(buf);i
  j.nodes.forEach((nd,i)=>{if(nd.mesh==null||nd.skin==null)return;const sk=j.skins[nd.skin],ib=acc(sk.inverseBindMatrices).a,bones=sk.joints.map(k=>objs[k]),inv=bones.map((b,k)=>new T.Matrix4().fromArray(ib,k*16));
   objs[i].bind(new T.Skeleton(bones,inv),new T.Matrix4())});return sc}
 function init3(){if(R3.ok)return true;try{const T=THREE,c=document.createElement('canvas');c.className='anim3';const r=new T.WebGLRenderer({canvas:c,antialias:true,alpha:true});
-  r.setPixelRatio(Math.min(2,devicePixelRatio||1));Object.assign(R3,{T,c,r,scene:new T.Scene(),cam:new T.PerspectiveCamera(30,4/3,1,2000),pool:{},az:30,el:14,ok:true});
+  r.setPixelRatio(Math.min(2,devicePixelRatio||1));r.shadowMap.enabled=true;r.shadowMap.type=T.PCFSoftShadowMap;Object.assign(R3,{T,c,r,scene:new T.Scene(),cam:new T.PerspectiveCamera(30,4/3,1,2000),pool:{},az:30,el:14,ok:true});
   R3.geo={cyl:new T.CylinderGeometry(1,1,1,18),ball:new T.SphereGeometry(1,20,14),box:new T.BoxGeometry(1,1,1)};
-  R3.hemi=new T.HemisphereLight(0xffffff,0x444444,.85);R3.dir=new T.DirectionalLight(0xffffff,.95);R3.dir.position.set(70,140,110);R3.scene.add(R3.hemi,R3.dir,new T.AmbientLight(0xffffff,.18));
+  R3.hemi=new T.HemisphereLight(0xffffff,0x444444,.62);R3.dir=new T.DirectionalLight(0xffffff,1.25);R3.dir.position.set(70,140,110);R3.dir.castShadow=true;R3.dir.shadow.mapSize.set(1024,1024);R3.dir.shadow.bias=-.0006;R3.dir.shadow.normalBias=.4;R3.dir.shadow.radius=4;R3.scene.add(R3.hemi,R3.dir,R3.dir.target,new T.AmbientLight(0xffffff,.18));
+  // gym floor: rubber tiles that fade out towards the edges
+  R3.floor=new T.Mesh(new T.PlaneGeometry(1,1),new T.MeshStandardMaterial({roughness:.95,transparent:true,depthWrite:false}));R3.floor.rotation.x=-Math.PI/2;R3.floor.receiveShadow=true;R3.floor.renderOrder=-1;R3.scene.add(R3.floor);
   const drag={};c.addEventListener('pointerdown',e=>{drag.on=1;drag.x=e.clientX;drag.y=e.clientY;try{c.setPointerCapture(e.pointerId)}catch(x){}});
   c.addEventListener('pointermove',e=>{if(!drag.on)return;R3.az-=(e.clientX-drag.x)*.45;R3.el=clamp(R3.el+(e.clientY-drag.y)*.3,0,60);drag.x=e.clientX;drag.y=e.clientY;if(ANI&&!ANI.playing)draw3(ANI.pp)});
   c.addEventListener('pointerdown',e=>{drag.sx=e.clientX;drag.sy=e.clientY});
   c.addEventListener('pointerup',e=>{drag.on=0;if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)return;const now=Date.now();if(now-(drag.last||0)<350){reset3();drag.last=0}else drag.last=now});
   c.addEventListener('pointercancel',()=>drag.on=0);
   return true}catch(e){R3.ok=false;R3.fail=true;return false}}
+// one texture: 7×7 rubber tiles with the fade to the edges baked in (the library shares one UV transform across maps, so no separate mask)
+function floorTex3(dark){const T=R3.T,N=1024,n=7,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d'),base=dark?[58,63,71]:[94,99,107],seam=dark?[36,39,44]:[74,79,87],ts=N/n;
+ let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+ for(let ty=0;ty<n;ty++)for(let tx=0;tx<n;tx++){const v=(rnd()-.5)*7;g.fillStyle=`rgb(${base.map(x=>Math.round(x+v)).join(',')})`;g.fillRect(tx*ts,ty*ts,ts,ts)}
+ for(let i=0;i<60000;i++){const v=(rnd()-.5)*(dark?26:22);g.fillStyle=`rgba(${base.map(x=>Math.round(x+v)).join(',')},.9)`;g.fillRect(rnd()*N,rnd()*N,1.5,1.5)}
+ g.strokeStyle=`rgb(${seam.join(',')})`;g.lineWidth=3;for(let k=0;k<=n;k++){const p=k*ts;g.beginPath();g.moveTo(p,0);g.lineTo(p,N);g.stroke();g.beginPath();g.moveTo(0,p);g.lineTo(N,p);g.stroke()}
+ g.globalCompositeOperation='destination-in';const gr=g.createRadialGradient(N/2,N/2,N*.08,N/2,N/2,N/2);gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(.55,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,N,N);
+ const t=new T.CanvasTexture(c);t.anisotropy=4;return{map:t}}
 function mats3(){const cs=getComputedStyle(document.documentElement),g=v=>cs.getPropertyValue(v).trim()||'#888',T=R3.T,M=(c,o={})=>new T.MeshStandardMaterial({color:new T.Color(c),roughness:.55,metalness:.05,...o});
+ {const dark=(document.documentElement.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';if(R3.floorDark!==dark||!R3.ftex){R3.ftex=floorTex3(dark);R3.floorDark=dark}R3.floor.material.map=R3.ftex.map;R3.floor.material.needsUpdate=true}
  R3.mat={man:M(g('--man')),joint:M(g('--man'),{roughness:.8}),face:M(g('--mut')),wt:M(g('--mut'),{metalness:.55,roughness:.35}),prop:M(g('--mut'),{roughness:.8}),pad:M(g('--line'),{roughness:.9}),
   floor:new T.MeshStandardMaterial({color:new T.Color(g('--mus')).multiplyScalar(.72),roughness:1}),mus1:M(g('--red'),{roughness:.45,emissive:new T.Color(g('--red')),emissiveIntensity:.15}),mus2:M('#'+new T.Color(g('--red')).lerp(new T.Color(g('--man')),.55).getHexString(),{roughness:.5}),cable:new T.MeshBasicMaterial({color:new T.Color(g('--mut'))}),band:new T.MeshBasicMaterial({color:new T.Color(g('--red2'))})}}
-function pget(type,mat){const key=type+'|'+mat,p=R3.pool[key]||(R3.pool[key]={l:[],i:0});let m=p.l[p.i];if(!m){m=new R3.T.Mesh(R3.geo[type],R3.mat[mat]);p.l.push(m);R3.scene.add(m)}m.material=R3.mat[mat];p.i++;m.visible=true;return m}
+function pget(type,mat){const key=type+'|'+mat,p=R3.pool[key]||(R3.pool[key]={l:[],i:0});let m=p.l[p.i];if(!m){m=new R3.T.Mesh(R3.geo[type],R3.mat[mat]);m.castShadow=mat!=='floor';m.receiveShadow=/pad|prop/.test(mat);p.l.push(m);R3.scene.add(m)}m.material=R3.mat[mat];p.i++;m.visible=true;return m}
 const V=a=>new R3.T.Vector3(a[0],a[1],a[2]),UPV=()=>new R3.T.Vector3(0,1,0);
 function seg3(a,b,r,mat){const A=V(a),B=V(b),d=B.clone().sub(A),l=d.length();if(l<.01)return;const m=pget('cyl',mat);m.position.copy(A).add(B).multiplyScalar(.5);m.scale.set(r,l,r);m.quaternion.setFromUnitVectors(UPV(),d.normalize())}
 function ball3(p,r,mat,sy){const m=pget('ball',mat);m.position.set(p[0],p[1],p[2]);m.scale.set(r,r*(sy||1),r);m.quaternion.identity()}
@@ -771,6 +801,8 @@ function fit3(k,ex){const pts=[];[0,.12,.23,.35,.46].forEach(ph=>{const o=pose3(
  const mn=[0,1,2].map(i=>Math.min(...pts.map(p=>p[i]))),mx=[0,1,2].map(i=>Math.max(...pts.map(p=>p[i])));mn[1]=Math.min(mn[1],0);
  const spec=spec3(k),props=spec.props||[];props.forEach(p=>{if(p.x1!=null){mn[0]=Math.min(mn[0],p.x1);mx[0]=Math.max(mx[0],p.x2)}});
  R3.tgt=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,0];R3.rad=Math.max(mx[0]-mn[0],mx[1]-mn[1],40)*.62+8}
+function stage3(){const T=R3.T,sz=56*7;R3.floor.position.set(R3.tgt[0],0,0);R3.floor.scale.set(sz,sz,1);
+ const d=R3.dir,sc=d.shadow.camera,r=R3.rad*1.5;d.position.set(R3.tgt[0]+60,170,90);d.target.position.set(R3.tgt[0],R3.tgt[1]*.5,0);d.target.updateMatrixWorld();sc.left=-r;sc.right=r;sc.top=r;sc.bottom=-r;sc.near=20;sc.far=420;sc.updateProjectionMatrix()}
 function cam3(){const a=R3.az*Math.PI/180,e=R3.el*Math.PI/180,d=R3.rad/Math.tan(15*Math.PI/180)*(R3.cam.aspect<1?1.25:1);
  R3.cam.position.set(R3.tgt[0]+d*Math.sin(a)*Math.cos(e),R3.tgt[1]+d*Math.sin(e),d*Math.cos(a)*Math.cos(e));R3.cam.lookAt(R3.tgt[0],R3.tgt[1],0)}
 // ---------- rigged mannequin (Mixamo X Bot from the three.js examples), posed from the same joint positions ----------
@@ -812,7 +844,7 @@ function setupModel3(sc){const T=R3.T,root=new T.Group(),hold=new T.Group();hold
  const meshes=[];sc.traverse(n=>{if(n.isSkinnedMesh){n.frustumCulled=false;meshes.push(n)}});
  const surf=meshes.find(m=>/Surface/.test(m.name))||meshes[0],joints=meshes.find(m=>m!==surf);
  R3.M={root,hold,sc,B,list,rest,s,surf,joints,armQ:list[0].parent.getWorldQuaternion(new T.Quaternion())};
- classify3(surf,B);surf.material=new T.MeshStandardMaterial({vertexColors:true,roughness:.55,metalness:.05});
+ classify3(surf,B);surf.material=new T.MeshStandardMaterial({vertexColors:true,roughness:.55,metalness:.05});surf.castShadow=true;if(joints)joints.castShadow=true;
  if(joints)joints.material=new T.MeshStandardMaterial({color:0x444444,roughness:.6})}
 // sort every vertex of the body into a muscle region, using the bone that moves it most and which side of that bone it sits on (rest pose, facing +Z, left +X)
 function classify3(mesh,B){const T=R3.T,g=mesh.geometry,P=g.attributes.position,J=g.attributes.skinIndex,Wt=g.attributes.skinWeight,sk=mesh.skeleton,n=P.count;
@@ -862,7 +894,7 @@ function poseModel3(o){const M=R3.M,T=R3.T,F=frames3(o),tgt={};
   const e=M.B[N+'ForeArm'].getWorldPosition(new T.Vector3());o['el'+S]=[e.x,e.y,e.z]})}
 
 function draw3(ph){if(!R3.ok||!R3.cur)return;const{k,ex}=R3.cur;if(R3.showM==null){try{R3.showM=localStorage.getItem('overload.m3')!=='0'}catch(e){R3.showM=true}}Object.values(R3.pool).forEach(p=>p.i=0);
- const o=pose3(k,ph,ex);box3([R3.tgt[0],-1,0],[R3.rad*3.2,2,R3.rad*2.2],'floor');
+ const o=pose3(k,ph,ex);
  if(R3.M&&R3.colored===R3.cur.id){R3.M.root.visible=true;poseModel3(o);pulse3(ph)}else{if(R3.M)R3.M.root.visible=false;man3(o);musc3(o,ph)}
  props3(o);weights3(o,ex);
  Object.values(R3.pool).forEach(p=>{for(let i=p.i;i<p.l.length;i++)p.l[i].visible=false});cam3();R3.r.render(R3.scene,R3.cam)}
@@ -870,7 +902,7 @@ function reset3(){if(!R3.ok)return;R3.az=R3.az0;R3.el=14;if(ANI&&!ANI.playing)dr
 function toggleM3(){R3.showM=!R3.showM;try{localStorage.setItem('overload.m3',R3.showM?'1':'0')}catch(e){}const b=$('#m3t');if(b)b.setAttribute('aria-pressed',R3.showM);if(R3.M&&R3.cur){colors3(R3.cur.id)}if(ANI&&!ANI.playing)draw3(ANI.pp)}
 function start3(id,box){if(!init3())return false;const k=animKey(id),ex=EX[id];mats3();R3.cur={k,ex,id};R3.az0=R3.az=(G3[k]||{}).cam??30;R3.el=14;fit3(k,ex);
  box.innerHTML='';box.appendChild(R3.c);box.insertAdjacentHTML('beforeend',`<div class="row" style="justify-content:center;gap:8px;margin-top:6px"><span class="hint">Drag to turn</span><button class="chip" onclick="reset3()">Reset view</button><button class="chip" id="m3t" aria-pressed="${R3.showM!==false}" onclick="toggleM3()">Muscles</button></div>`);
- const w=Math.min(box.clientWidth||320,420),h=Math.round(w*.78);R3.r.setSize(w,h,false);R3.c.style.width=w+'px';R3.c.style.height=h+'px';R3.cam.aspect=w/h;R3.cam.updateProjectionMatrix();
+ stage3();const w=Math.min(box.clientWidth||320,420),h=Math.round(w*.78);R3.r.setSize(w,h,false);R3.c.style.width=w+'px';R3.c.style.height=h+'px';R3.cam.aspect=w/h;R3.cam.updateProjectionMatrix();
  try{draw3(ANI?ANI.pp:.46)}catch(e){R3.ok=false;return false}
  const useM=()=>{if(!R3.cur||R3.cur.id!==id)return;try{colors3(id);R3.colored=id;if(ANI&&!ANI.playing)draw3(ANI.pp)}catch(e){console.error(e);R3.colored=null}};
  if(R3.M)useM();else if(!R3.mFail)loadModel3().then(useM).catch(()=>{R3.mFail=true});return true}
@@ -984,7 +1016,7 @@ const STEP={bb:[2.5,5],db:[2,5],kb:[4,10],cable:[2.5,5]};
 function curP(){return WIZ?draftProfile():ST&&ST.profile}
 function kbList(){const p=curP();return p&&p.kbs&&p.kbs.length?[...p.kbs].sort((a,b)=>a-b):[]}
 function snapKb(kg){const L=kbList();if(!L.length)return null;return L.reduce((a,b)=>Math.abs(b-kg)<Math.abs(a-kg)?b:a)}
-function roundW(kg,kind){if(kind=='kb'){const k=snapKb(kg);if(k!=null)return k}const st=STEP[kind];if(!st)return 0;const lb=U()=='lb',s=lb?st[1]:st[0];
+function roundW(kg,kind){if(kind=='kb'){const k=snapKb(kg);if(k!=null)return k}if(kind=='bb'){const L=plLoad(kg);if(L)return L.total}const st=STEP[kind];if(!st)return 0;const lb=U()=='lb',s=lb?st[1]:st[0];
  let x=lb?kg*KL:kg;x=Math.max(Math.round(x/s)*s,s);if(kind=='bb')x=Math.max(x,lb?45:20);return lb?x/KL:x}
 function incW(ex){const lb=U()=='lb';let v=ex.k=='bb'?(ex.low?(lb?10:5):(lb?5:2.5)):ex.k=='db'?(lb?5:2):ex.k=='kb'?(lb?10:4):(ex.low?(lb?10:5):(lb?5:2.5));return lb?v/KL:v}
 function est(ex,p){if(!ex||!ex.r)return 0;const bw=+p.weightKg||75;let f={beg:.6,int:.9,adv:1.15}[p.exp]||.8;
@@ -1014,7 +1046,8 @@ function prog(it){const ex=EX[it.ex],L=lift(it.ex),sets=it.sets;if(!sets.length)
  if(top>L.w+.01){L.w=top;L.f=0}
  const at=sets.filter(s=>s.w>=L.w-.01),need=ramp?Math.max(1,(L.pat||[1]).filter(q=>q>=.99).length):it.s;
  if(at.length>=need&&at.every(s=>s.r>=b)){if(ex.k=='kb'&&kbList().length){const n=kbList().find(x=>x>L.w+.01);if(!n){L.adj=adj+2;return`${ex.n}: that's your heaviest kettlebell, so the target moves up to ${a+2}–${b+2} reps`}L.w=n;L.f=0;L.adj=0;return`${ex.n} moves up to the ${fwu(n)} kettlebell`}
-  L.w=roundW(L.w+incW(ex),ex.k);L.f=0;L.adj=0;return`${ex.n} goes up to ${fwu(L.w)}`}
+  let nw=roundW(L.w+incW(ex),ex.k);if(ex.k=='bb'&&plCfg()&&nw<=L.w+.01){const nx=plNext(L.w);if(nx==null){L.adj=adj+2;return`${ex.n}: that's the most your plates can load, so the target moves up to ${a+2}–${b+2} reps`}nw=nx}
+  L.w=nw;L.f=0;L.adj=0;return`${ex.n} goes up to ${fwu(L.w)}`}
  if(at.length&&at.some(s=>s.r<a)){L.f=(L.f||0)+1;if(L.f>=2){if(L.adj){L.adj=Math.max(0,L.adj-2)}else if(ex.k=='kb'&&kbList().length){L.w=[...kbList()].reverse().find(x=>x<L.w-.01)||L.w}else L.w=roundW(L.w*.9,ex.k);L.f=0;return`${ex.n} drops to ${fwu(L.w)} so you can build back up`}return`${ex.n}: stay at ${fwu(L.w)} and get every set to ${a} reps`}
  L.f=0;return null}
 function prCheck(w){const out=[];
@@ -1039,7 +1072,7 @@ function norm(s){if(!s||!s.profile||!s.plan)return null;
  s.v=1;s.lifts=s.lifts||{};s.prs=s.prs||{};s.prLog=s.prLog||[];s.badges=s.badges||{};
  s.body=s.body||{};s.body.weights=s.body.weights||[];s.body.meas=s.body.meas||[];
  s.workouts=(s.workouts||[]).filter(w=>w&&w.id).sort((a,b)=>String(a.at).localeCompare(String(b.at)));
- s.settings=Object.assign({theme:'auto',sound:true,vib:true},s.settings||{});
+ s.settings=Object.assign({theme:'auto',sound:true,vib:true,warm:true,deload:6},s.settings||{});
  s.custom=(s.custom||[]).filter(c=>!(c.lib&&LIB.some(e=>e.id==c.id)));s.custom.forEach(regCustom);s.shelf=s.shelf||[];
  [s.plan,...s.shelf].forEach(pl=>{pl.id=pl.id||uid();pl.name=pl.name||'Built for you';if(pl.auto===undefined)pl.auto=true;pl.next=pl.next||0});
  const pf=s.profile;pf.blocked=pf.blocked||[];if(!pf.kbs)pf.kbs=+pf.kbMax?[+pf.kbMax]:[];
@@ -1176,6 +1209,7 @@ function render(){applyTheme();const app=$('#app'),nav=$('#nav');
  if(VIEW=='workout'){app.innerHTML=workoutHTML();nav.hidden=true;tickRest();return}
  nav.hidden=false;$('#navIn').innerHTML=navHTML();$('#timer').hidden=true;
  app.innerHTML=demoBar()+(VIEW=='today'||VIEW=='me'?syncWarn():'')+({today:todayHTML,plan:planHTML,log:logHTML,progress:progHTML,me:meHTML}[VIEW]||todayHTML)();
+ if(VIEW=='progress'&&UI.ptab=='body')photoRender();else photoClear();
  requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off})}
 
 // ---------- charts ----------
@@ -1211,6 +1245,7 @@ function coach(gs,next){const st=streak(),c=weekCounts()[monday(today())]||0,tgt
 function todayHTML(){const t=today(),gs=gStat(),days=ST.plan.days,ni=days.length?ST.plan.next%days.length:0,nd=days[ni];
  const c=weekCounts()[monday(t)]||0,st=streak(),wkDone=new Set(ST.workouts.filter(w=>monday(w.d)==monday(t)).map(w=>(dP(w.d).getDay()+6)%7)),dow=(dP(t).getDay()+6)%7;
  let h=`<div class="top"><div><div class="eyebrow">${fD(t,{weekday:'long',day:'numeric',month:'long'})}</div><h1>${ST.profile.name?'Hi, '+H(ST.profile.name):'Today'}</h1></div></div><div class="stack">`;
+ h+=dlCards();
  if(ACT)h+=`<button class="card row sp" style="border-color:var(--red);text-align:left" onclick="go('workout')"><div><div class="eyebrow">Workout in progress</div><h3>${H(ACT.n)}</h3></div><span class="btn pri sm">Resume</span></button>`;
  if(gs){const sl=ST_LBL[gs.status]||ST_LBL.on;
   h+=`<section class="card"><div class="goal">${plateSVG(gs.pct||0)}<div class="stack" style="gap:10px;min-width:0"><div><div class="eyebrow">Your goal</div><h3>${H(gs.title)}</h3></div>
@@ -1234,8 +1269,121 @@ function todayHTML(){const t=today(),gs=gStat(),days=ST.plan.days,ni=days.length
  return h+'</div>'}
 
 // ---------- WORKOUT ----------
+// ---------- plates: what you own, what you can load, and a picture of the loaded bar ----------
+const PLDEF={kg:{unit:'kg',bar:20,pairs:{'25':0,'20':2,'15':0,'10':2,'5':2,'2.5':2,'1.25':2}},lb:{unit:'lb',bar:45,pairs:{'45':2,'35':0,'25':2,'10':2,'5':2,'2.5':2}}};
+const defPlates=u=>clone(PLDEF[u]||PLDEF.kg);
+const plCfg=()=>{const p=curP();return p&&p.plates&&p.equip&&p.equip.includes('bb')?p.plates:null};
+const PLC=new Map();
+function plTable(cfg){const key=JSON.stringify(cfg);if(PLC.has(key))return PLC.get(key);
+ const sz=Object.keys(cfg.pairs).map(Number).filter(s=>cfg.pairs[s]>0).sort((a,b)=>b-a);let best=new Map([[0,[]]]);
+ for(const s of sz){const n=cfg.pairs[s],next=new Map(best);for(const[sum,pl]of best){let acc=sum,arr=pl;for(let c=1;c<=n;c++){acc=+(acc+s).toFixed(3);arr=[...arr,s];const ex=next.get(acc);if(!ex||arr.length<ex.length)next.set(acc,arr)}}best=next}
+ const t=[...best.entries()].sort((a,b)=>a[0]-b[0]);PLC.set(key,t);return t}
+const plToU=(cfg,kg)=>cfg.unit=='lb'?kg*KL:kg,plFromU=(cfg,v)=>cfg.unit=='lb'?v/KL:v;
+function plLoad(kg,cfg){cfg=cfg||plCfg();if(!cfg)return null;const side=(plToU(cfg,kg)-cfg.bar)/2,T=plTable(cfg);let b=T[0];
+ for(const e of T)if(Math.abs(e[0]-side)<Math.abs(b[0]-side)-1e-9)b=e;const tot=cfg.bar+2*b[0];return{total:plFromU(cfg,tot),unitTotal:tot,side:b[1],exact:Math.abs(b[0]-side)<1e-6,cfg}}
+function plNext(kg,cfg){cfg=cfg||plCfg();if(!cfg)return null;const cur=plToU(cfg,kg)+1e-6,e=plTable(cfg).find(x=>cfg.bar+2*x[0]>cur);return e?plFromU(cfg,cfg.bar+2*e[0]):null}
+const plCol=kgv=>kgv>=24?'var(--red)':kgv>=19?'var(--blue)':kgv>=14?'var(--yel)':kgv>=9?'var(--grn)':kgv>=4.5?'var(--fg)':'var(--mut)';
+function plSVG(L){const cfg=L.cfg,W=200,HT=84,cy=42;let x=40,g=`<rect x="0" y="${cy-3}" width="28" height="6" rx="2" fill="var(--mut)"/><rect x="28" y="${cy-10}" width="7" height="20" rx="2" fill="var(--mut)"/><rect x="35" y="${cy-4}" width="${W-38}" height="8" rx="3" fill="var(--line)"/>`;
+ L.side.forEach(p=>{const kgv=cfg.unit=='lb'?p/KL:p,h=Math.max(22,Math.min(80,20+kgv*2.4)),w=Math.max(5,Math.min(14,4+kgv*.42));g+=`<rect x="${x}" y="${cy-h/2}" width="${w}" height="${h}" rx="2.5" fill="${plCol(kgv)}" stroke="var(--bg)" stroke-width="1"/>`;x+=w+1.5});
+ if(L.side.length)g+=`<rect x="${x+1}" y="${cy-8}" width="7" height="16" rx="2" fill="var(--mut)"/>`;
+ return`<svg viewBox="0 0 ${W} ${HT}" style="width:100%;max-width:340px;height:auto;display:block;margin:6px 0" role="img" aria-label="${H(plTxt(L))}">${g}</svg>`}
+const plTxt=L=>L.side.length?'Each side: '+L.side.map(p=>nf(p,2)).join(' + ')+' '+L.cfg.unit:'Just the bar';
+function platesSheet(i){const it=ACT.items[i],cfg=plCfg();if(!cfg)return;const ws=[...new Set([...(it.wu||[]),...it.sets].map(s=>+(+s.w).toFixed(3)).filter(w=>w>0))].sort((a,b)=>a-b);
+ openSheet(`<div class="stack"><div><div class="eyebrow">Plate calculator · ${nf(cfg.bar,2)} ${cfg.unit} bar</div><h2>${H(EX[it.ex].n)}</h2></div>
+ ${ws.map(w=>{const L=plLoad(w,cfg);return`<div class="card" style="padding:12px"><div class="row sp"><b class="big num" style="font-size:24px">${nf(L.unitTotal,2)} ${cfg.unit}</b>${L.exact?'':`<span class="pill gold">Closest to ${nf(plToU(cfg,w),2)}</span>`}</div>${plSVG(L)}<p class="hint">${plTxt(L)}</p></div>`}).join('')||'<p class="mut">No barbell weights in this exercise yet.</p>'}
+ <button class="btn sec full" onclick="platesEditor('p')">Change my plates</button><button class="btn ghost full" onclick="closeSheet()">Close</button></div>`)}
+function plEditHTML(cfg,ctx){return`<div class="stack" style="gap:10px"><label class="f">Bar weight (${cfg.unit})<input type="number" inputmode="decimal" step="any" min="0" value="${cfg.bar}" onchange="plSet('${ctx}','bar',+this.value)"></label>
+ <div class="eyebrow">Pairs of plates you own</div><div class="list">${Object.keys(cfg.pairs).sort((a,b)=>b-a).map(s=>`<div class="li"><div class="row" style="gap:10px"><span style="width:14px;height:14px;border-radius:50%;background:${plCol(cfg.unit=='lb'?s/KL:+s)};display:inline-block"></span><b>${s} ${cfg.unit}</b></div>
+ <div class="row" style="flex-wrap:nowrap;gap:6px"><button class="btn sec sm" aria-label="One fewer pair of ${s}" onclick="plSet('${ctx}','${s}',-1)">−</button><b class="num" style="min-width:22px;text-align:center">${cfg.pairs[s]}</b><button class="btn sec sm" aria-label="One more pair of ${s}" onclick="plSet('${ctx}','${s}',1)">+</button></div></div>`).join('')}</div>
+ <p class="hint">Barbell weights in your plan snap to what these plates can actually make.</p></div>`}
+function plSet(ctx,k,v){const cfg=ctx=='w'?wd().plates:ST.profile.plates;if(!cfg)return;if(k=='bar')cfg.bar=Math.max(0,v||0);else cfg.pairs[k]=clamp((cfg.pairs[k]||0)+v,0,12);
+ if(ctx=='w')render();else{Object.entries(ST.lifts).forEach(([id,L])=>{if(EX[id]&&EX[id].k=='bb'&&L.w>0)L.w=roundW(L.w,'bb')});persist('core');platesEditor('p')}}
+function platesEditor(ctx){if(ctx=='p'){if(!ST.profile.plates)ST.profile.plates=defPlates(U());openSheet(`<div class="stack"><h2>Your barbell and plates</h2>${plEditHTML(ST.profile.plates,'p')}<button class="btn pri full" onclick="closeSheet();render()">Done</button></div>`)}}
+
+// ---------- warm-up sets on main lifts (not counted towards progress or records) ----------
+// warm-ups always sit below the first working set: build-up lifts already start light, so they just get the empty bar and one easy set
+function warmFor(it,t){const ex=EX[it.ex];if(!ST||ST.settings.warm===false||!it.m||!ex||!ex.r||!(t.w>0)||!['bb','db','kb','cable'].includes(ex.k))return[];
+ const W=t.ramp?Math.min(...t.sets.map(x=>x.w).filter(w=>w>0)):t.w,out=[],add=(w,r)=>{w=roundW(w,ex.k);if(w>0&&w<W-.01&&!out.some(x=>Math.abs(x.w-w)<.01))out.push({w,r,done:0})};
+ if(ex.k=='bb'){const c=plCfg(),bar=c?plFromU(c,c.bar):(U()=='lb'?45/KL:20);if(W>bar*1.4)out.push({w:bar,r:10,done:0})}
+ if(t.ramp)add(W*.65,6);else{add(W*.5,8);add(W*.7,5);if(W>=(U()=='lb'?100/KL:45))add(W*.85,3)}return out.sort((a,b)=>a.w-b.w)}
+function tickW(i,j){audio();const s=ACT.items[i].wu[j];s.done=s.done?0:1;if(s.done)startRest(45,'warm-up');saveAct();render()}
+
+// ---------- deload weeks ----------
+const DL=()=>!!(ST&&ST.settings.dlNow&&today()<=ST.settings.dlNow.end);
+function dlSuggest(){const S=ST.settings,every=S.deload??6;if(DL()||ST.workouts.length<6)return null;if(S.dlSnooze&&today()<S.dlSnooze)return null;
+ const first=ST.workouts[0].d;if(dBet(first,today())<21)return null;const since=(S.dlNow&&S.dlNow.end)||S.dlLast||first,weeks=dBet(since,today())/7;
+ const ids=[...new Set(ST.plan.days.flatMap(d=>d.items.filter(it=>it.m).map(it=>it.ex)))],stalled=ids.filter(id=>(ST.lifts[id]?.f||0)>=1).length;
+ if(stalled>=3)return`${stalled} of your main lifts have stalled. A lighter week usually gets them moving again.`;
+ if(every&&weeks>=every)return`You've trained for ${Math.floor(weeks)} weeks since your last break. A lighter week lets your body catch up so you can push on.`;return null}
+function dlStart(){ST.settings.dlNow={start:today(),end:addD(today(),6)};ST.settings.dlSnooze=null;persist('core');render();toast('Deload week started')}
+function dlSnooze(){ST.settings.dlSnooze=addD(today(),7);persist('core');render()}
+function dlEnd(){ST.settings.dlLast=today();ST.settings.dlNow=null;persist('core');render();toast('Back to normal training')}
+function dlAdjust(it,t){if(!DL())return t;const ex=EX[it.ex],n=Math.max(1,Math.ceil(t.sets.length*.6)),lw=w=>w>0&&ex.r?roundW(w*.9,ex.k):w;
+ return{...t,w:lw(t.w),sets:(t.ramp?t.sets.slice(-n):t.sets.slice(0,n)).map(s=>({w:lw(s.w),r:s.r})),dl:1}}
+function dlCards(){let h='';const S=ST.settings;
+ if(DL())h+=`<section class="card" style="border-color:var(--blue)"><div class="eyebrow" style="color:var(--blue)">Deload week</div><h3 style="margin-top:4px">Lighter on purpose</h3>
+  <p class="hint" style="margin-top:6px">Fewer sets and about 10% less weight, and no weight changes until it ends on ${fD(S.dlNow.end,{weekday:'long',day:'numeric',month:'short'})}. You'll come back stronger.</p>
+  <button class="btn ghost sm" style="margin-top:8px" onclick="dlEnd()">End deload early</button></section>`;
+ else{const why=dlSuggest();if(why)h+=`<section class="card" style="border-color:var(--blue)"><div class="eyebrow" style="color:var(--blue)">Time for a lighter week?</div><p style="margin-top:6px">${why}</p>
+  <div class="grid2" style="margin-top:12px"><button class="btn pri" onclick="dlStart()">Start deload week</button><button class="btn sec" onclick="dlSnooze()">Not now</button></div></section>`}
+ if(S.dlNow&&!DL()&&!S.dlLast){}
+ return h}
+
+// ---------- weekly muscle balance ----------
+const BAL=['chest','delts','rdelt','lats','upback','traps','biceps','triceps','forearms','abs','obliques','lowback','glutes','quads','hams','calves'];
+function balWeek(wk){const start=addD(monday(today()),-7*wk),end=addD(start,6),v={};BAL.forEach(k=>v[k]=0);
+ ST.workouts.filter(w=>w.d>=start&&w.d<=end).forEach(w=>w.items.forEach(it=>{const m=musc(it.ex),n=it.sets.length;m.p.forEach(k=>{if(k in v)v[k]+=n});m.s.forEach(k=>{if(k in v)v[k]+=n*.5})}));return{v,start,end}}
+const balCol=x=>x<=0?null:x<10?`color-mix(in srgb,var(--yel) ${Math.round(35+65*x/10)}%,var(--mus))`:x<=20?'var(--grn)':'var(--blue)';
+function balanceTab(){const wk=UI.bw||0,B=balWeek(wk),heat={};BAL.forEach(k=>heat[k]=balCol(B.v[k]));
+ const low=BAL.filter(k=>['chest','lats','upback','delts','glutes','quads','hams'].includes(k)).sort((a,b)=>B.v[a]-B.v[b]).slice(0,2);
+ const tot=BAL.reduce((a,k)=>a+B.v[k],0),mx=25;
+ return`<div class="seg" role="group" aria-label="Week">${[[0,'This week'],[1,'Last week']].map(([k,l])=>`<button aria-pressed="${wk==k}" onclick="UI.bw=${k};render()">${l}</button>`).join('')}</div>
+ <section class="card"><div class="hd"><h3>Hard sets per muscle</h3><span class="hint">${fD(B.start)}–${fD(B.end)}</span></div>
+ <div class="figbig" style="margin-bottom:12px">${figSVG(null,1,heat)}</div>
+ <div class="row" style="gap:14px;font-size:12.5px;font-weight:700;color:var(--mut)"><span><span class="sw2" style="background:var(--yel)"></span> Under 10</span><span><span class="sw2" style="background:var(--grn)"></span> 10–20</span><span><span class="sw2" style="background:var(--blue)"></span> Over 20</span></div>
+ ${tot?`<p class="hint" style="margin-top:10px">${wk==0?'So far this week. ':''}Lowest: ${low.map(k=>`${MNAME[k].toLowerCase()} (${nf(B.v[k],1)})`).join(' and ')}.</p>`:`<p class="hint" style="margin-top:10px">No sets logged ${wk==0?'yet this week':'last week'}.</p>`}</section>
+ <section class="card"><div class="list">${BAL.map(k=>{const x=B.v[k],c=balCol(x)||'var(--line)';return`<div class="li" style="display:grid;grid-template-columns:minmax(0,7.5em) 1fr 3.2em;gap:10px">
+  <span class="nm" style="font-size:13.5px">${MNAME[k]}</span><span style="position:relative;height:12px;border-radius:6px;background:var(--surf2);overflow:hidden">
+  <span style="position:absolute;left:${10/mx*100}%;width:${10/mx*100}%;top:0;bottom:0;background:color-mix(in srgb,var(--grn) 18%,transparent)"></span>
+  <span style="position:absolute;left:0;top:0;bottom:0;width:${Math.min(100,x/mx*100)}%;background:${c};border-radius:6px"></span></span><span class="val" style="font-size:13.5px">${nf(x,1)}</span></div>`}).join('')}</div>
+ <p class="hint" style="margin-top:10px">Each working set counts once for the main muscles and half for the ones that help. Most people grow best with about 10–20 hard sets per muscle each week.</p></section>`}
+
+// ---------- progress photos (kept on this phone only) ----------
+let IDBP=null,PURLS=[];
+function idb(){if(IDBP)return IDBP;IDBP=new Promise((ok,no)=>{if(!window.indexedDB)return no(new Error('no storage'));const r=indexedDB.open('overload',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>{IDBP=null;no(r.error)}});return IDBP}
+function ptx(mode,fn){return idb().then(db=>new Promise((ok,no)=>{const t=db.transaction('photos',mode),req=fn(t.objectStore('photos'));t.oncomplete=()=>ok(req&&'result'in req?req.result:undefined);t.onerror=()=>no(t.error);t.onabort=()=>no(t.error)}))}
+const photoAll=()=>ptx('readonly',s=>s.getAll()).then(a=>(a||[]).sort((x,y)=>(y.d+y.id).localeCompare(x.d+x.id)));
+function shrinkImg(file,max,q){return new Promise((ok,no)=>{const u=URL.createObjectURL(file),i=new Image();i.onload=()=>{const sc=Math.min(1,max/Math.max(i.naturalWidth,i.naturalHeight)),c=document.createElement('canvas');
+ c.width=Math.max(1,Math.round(i.naturalWidth*sc));c.height=Math.max(1,Math.round(i.naturalHeight*sc));c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?ok(b):no(new Error('image')),'image/jpeg',q)};i.onerror=()=>{URL.revokeObjectURL(u);no(new Error('image'))};i.src=u})}
+async function photoAdd(file){if(!file)return;try{toast('Saving photo…');const[full,thumb]=await Promise.all([shrinkImg(file,1400,.84),shrinkImg(file,360,.78)]);
+  await ptx('readwrite',s=>s.put({id:uid(),d:today(),kg:trendW()||ST.profile.weightKg||null,full,thumb}));toast('Photo saved on this phone');render()}
+ catch(e){toast("Couldn't save that photo. Try a different one.")}}
+const purl=b=>{const u=URL.createObjectURL(b);PURLS.push(u);return u};
+function photoClear(){PURLS.forEach(u=>URL.revokeObjectURL(u));PURLS=[]}
+async function photoRender(){const box=$('#phGrid');if(!box)return;let L=[];try{L=await photoAll()}catch(e){box.innerHTML='<p class="hint">Photos aren\'t available in this browser.</p>';return}
+ if(!$('#phGrid'))return;photoClear();
+ box.innerHTML=L.length?`<div class="phg">${L.map(p=>`<button class="ph" onclick="photoView('${p.id}')" aria-label="Photo from ${fD(p.d,{day:'numeric',month:'long',year:'numeric'})}"><img src="${purl(p.thumb)}" alt=""><span>${fD(p.d,{day:'numeric',month:'short'})}</span></button>`).join('')}</div>`
+  :'<p class="hint">Take one every few weeks in the same spot and light. They\'re often more convincing than the scales.</p>'}
+async function photoView(id){const L=await photoAll(),p=L.find(x=>x.id==id);if(!p)return;
+ openSheet(`<div class="stack"><div class="row sp" style="flex-wrap:nowrap"><div><div class="eyebrow">Progress photo</div><h2>${fD(p.d,{day:'numeric',month:'long',year:'numeric'})}</h2></div><button class="ib" onclick="closeSheet()" aria-label="Close">${IC.x}</button></div>
+ <img src="${purl(p.full)}" alt="Progress photo" style="width:100%;border-radius:14px;display:block">
+ ${p.kg?`<p class="hint">Body weight around then: ${nf(bwv(p.kg),1)} ${U()}</p>`:''}
+ <label class="f">Date taken<input type="date" value="${p.d}" max="${today()}" onchange="photoDate('${id}',this.value)"></label>
+ ${L.length>1?`<button class="btn pri full" onclick="photoPick('${id}')">Compare with another photo</button>`:''}
+ <div id="phDel"><button class="btn dang full" onclick="photoDelAsk('${id}')">Delete photo</button></div></div>`)}
+function photoDelAsk(id){const b=$('#phDel');if(b)b.innerHTML=`<p class="warn">Delete this photo for good?</p><div class="grid2" style="margin-top:8px"><button class="btn pri" onclick="photoDel('${id}')">Delete</button><button class="btn sec" onclick="photoView('${id}')">Keep</button></div>`}
+async function photoDate(id,d){if(!d)return;const L=await photoAll(),p=L.find(x=>x.id==id);if(!p)return;p.d=d;await ptx('readwrite',s=>s.put(p));render()}
+async function photoDel(id){await ptx('readwrite',s=>s.delete(id));closeSheet();render();toast('Photo deleted')}
+async function photoPick(a){const L=(await photoAll()).filter(x=>x.id!=a);
+ openSheet(`<div class="stack"><h2>Compare with</h2><div class="phg">${L.map(p=>`<button class="ph" onclick="photoCompare('${a}','${p.id}')"><img src="${purl(p.thumb)}" alt=""><span>${fD(p.d,{day:'numeric',month:'short',year:'2-digit'})}</span></button>`).join('')}</div><button class="btn ghost full" onclick="photoView('${a}')">Back</button></div>`)}
+async function photoCompare(a,b){const L=await photoAll();let[p,q]=[L.find(x=>x.id==a),L.find(x=>x.id==b)];if(!p||!q)return;if(p.d>q.d)[p,q]=[q,p];
+ const dd=dBet(p.d,q.d),dk=p.kg&&q.kg?q.kg-p.kg:null;
+ openSheet(`<div class="stack"><div class="row sp" style="flex-wrap:nowrap"><div><div class="eyebrow">${dd} days apart${dk!=null?` · ${dk>0?'+':dk<0?'−':''}${nf(Math.abs(bwv(dk)),1)} ${U()}`:''}</div><h2>Before and after</h2></div><button class="ib" onclick="closeSheet()" aria-label="Close">${IC.x}</button></div>
+ <div class="grid2" style="gap:8px">${[p,q].map(x=>`<figure style="margin:0"><img src="${purl(x.full)}" alt="" style="width:100%;border-radius:12px;display:block"><figcaption class="hint" style="text-align:center;margin-top:4px">${fD(x.d,{day:'numeric',month:'short',year:'numeric'})}</figcaption></figure>`).join('')}</div>
+ <button class="btn sec full" onclick="closeSheet()">Done</button></div>`)}
+
 function newActive(di){const day=ST.plan.days[di];return{id:uid(),day:di,n:day.n,start:Date.now(),
- items:day.items.map((it,pi)=>{const t=targetFor(it);return{...clone(it),pi,t,sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))}}),
+ items:day.items.map((it,pi)=>{const t=dlAdjust(it,targetFor(it));return{...clone(it),pi,t,wu:warmFor(it,t),sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))}}),
  cardio:day.cardio?{type:day.cardio.type,min:day.cardio.min,km:'',done:0}:null,notes:''}}
 let wakeLock=null;async function wake(){try{if(navigator.wakeLock&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>wakeLock=null)}}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState=='visible'&&ACT&&VIEW=='workout')wake()});
@@ -1243,10 +1391,12 @@ function startW(di){if(ACT){go('workout');return}ACT=newActive(di);saveAct();VIE
 function exCard(it,i){const ex=EX[it.ex],t=it.t||{w:0,r:it.a,a:it.a,b:it.b},last=lastSets(it.ex),band=ex.k=='band',u=ex.t?'sec':'reps';
  const lastTxt=last?last.map(s=>(s.w>0?fw(s.w)+'×':'')+s.r).join(', '):'';
  return`<section class="card" id="ex${i}"><div class="exh"><div class="nmr" style="align-items:flex-start">${thumb(it.ex,1)}<div style="min-width:0"><button class="exn" onclick="guide('${it.ex}')"><h3>${ex.n}</h3></button>
-  <div class="sub">${t.ramp?`Build up to <span class="tgt">${fwu(t.w)} × ${t.r}</span>`:`Target <span class="tgt">${t.w>0?fwu(t.w)+' × ':''}${t.r} ${u}</span>`} · range ${t.a}–${t.b} · rest ${mmss(it.r)}</div>
-  ${last?`<div class="sub">Last time: ${lastTxt}</div>`:'<div class="sub">First time: this sets your baseline</div>'}</div></div>
+  <div class="sub">${t.ramp?`Build up to <span class="tgt">${fwu(t.w)} × ${t.r}</span>`:`Target <span class="tgt">${t.w>0?fwu(t.w)+' × ':''}${t.r} ${u}</span>`} · range ${t.a}–${t.b} · rest ${mmss(it.r)}${t.dl?' <span class="tag" style="color:var(--blue)">Deload</span>':''}</div>
+  ${last?`<div class="sub">Last time: ${lastTxt}</div>`:'<div class="sub">First time: this sets your baseline</div>'}
+  ${ex.k=='bb'&&plCfg()?`<button class="chip" style="min-height:32px;padding:4px 12px;font-size:12.5px;margin-top:6px" onclick="platesSheet(${i})">Plates</button>`:''}</div></div>
   <button class="ib" onclick="exMenu(${i})" aria-label="Options for ${ex.n}">${IC.more}</button></div>
   <div class="sets"><div class="set hdr"><span>Set</span><span>${ex.r?U():band?'Band':'+'+U()}</span><span>${u}</span><span></span></div>
+  ${(it.wu||[]).length?`<div class="eyebrow" style="margin-top:2px">Warm-up</div>${it.wu.map((s,j)=>`<div class="set wu${s.done?' done':''}"><span class="sn">W</span><span class="na num">${fw(s.w)}</span><span class="na num">${s.r}</span><button class="tick" aria-pressed="${s.done?'true':'false'}" aria-label="Warm-up set ${j+1} done" onclick="tickW(${i},${j})">${IC.check}</button></div>`).join('')}<div class="eyebrow" style="margin-top:4px">Working sets</div>`:''}
   ${it.sets.map((s,j)=>`<div class="set${s.done?' done':''}"><span class="sn">${j+1}</span>
    ${band?'<span class="na">Band</span>':`<input id="w${i}_${j}" type="number" inputmode="decimal" step="any" min="0" value="${s.w>0?wv(s.w):(ex.r?'':0)}" aria-label="Set ${j+1} weight in ${U()}" onchange="setV(${i},${j},'w',this.value)">`}
    <input id="r${i}_${j}" type="number" inputmode="numeric" min="0" value="${s.r}" aria-label="Set ${j+1} ${u}" onchange="setV(${i},${j},'r',this.value)">
@@ -1296,7 +1446,7 @@ function blockEx(id,wi){const p=ST.profile;if(!p.blocked.includes(id))p.blocked.
  ST.plan.days.forEach(d=>{for(let i=d.items.length-1;i>=0;i--){const it=d.items[i];if(it.ex!=id)continue;const alt=altFor(id,d.items.map(x=>x.ex));
   if(alt){it.ex=alt.id;fitItem(it,alt);lift(alt.id);rep=alt}else d.items.splice(i,1)}});
  if(wi!=null&&ACT&&ACT.items[wi]){const it=ACT.items[wi],alt=altFor(id,ACT.items.map(x=>x.ex));
-  if(alt){it.ex=alt.id;fitItem(it,alt);const t=targetFor(it);it.t=t;it.sets=t.sets.map((x,j)=>it.sets[j]&&it.sets[j].done?it.sets[j]:{w:x.w,r:x.r,done:0});rep=alt}else ACT.items.splice(wi,1);
+  if(alt){it.ex=alt.id;fitItem(it,alt);const t=dlAdjust(it,targetFor(it));it.t=t;it.wu=warmFor(it,t);it.sets=t.sets.map((x,j)=>it.sets[j]&&it.sets[j].done?it.sets[j]:{w:x.w,r:x.r,done:0});rep=alt}else ACT.items.splice(wi,1);
   ACT.items.forEach(x=>{if(x.pi!=null&&ST.plan.days[ACT.day]&&!ST.plan.days[ACT.day].items[x.pi])x.pi=null});saveAct()}
  persist('core');closeSheet();render();toast(rep?`${n} ruled out. Replaced with ${rep.n}.`:`${n} ruled out and removed.`)}
 function unblockEx(id){const b=ST.profile.blocked;b.splice(b.indexOf(id),1);persist('core');render();toast(EX[id].n+' can be suggested again. Rebuild your plan to use it.')}
@@ -1312,7 +1462,7 @@ function swapSheet(mode,i,di,all,q){const cur=mode=='w'?ACT.items[i].ex:ST.plan.
   <button class="btn ghost full" onclick="closeSheet()">Cancel</button></div>`)}
 function doSwap(mode,i,id,di){if(mode=='w'){const it=ACT.items[i],keep=$('#swPlan')&&$('#swPlan').checked;it.ex=id;
   const ex=EX[id];if(ex.t){it.a=30;it.b=60}else if(!ex.r){it.a=Math.max(it.a,8);it.b=Math.max(it.b,15)}
-  const t=targetFor(it);it.t=t;it.sets=t.sets.map((x,j)=>it.sets[j]&&it.sets[j].done?it.sets[j]:{w:x.w,r:x.r,done:0});
+  const t=dlAdjust(it,targetFor(it));it.t=t;it.wu=warmFor(it,t);it.sets=t.sets.map((x,j)=>it.sets[j]&&it.sets[j].done?it.sets[j]:{w:x.w,r:x.r,done:0});
   if(keep&&ACT.day!=null&&it.pi!=null&&ST.plan.days[ACT.day]?.items[it.pi]){const p=ST.plan.days[ACT.day].items[it.pi];p.ex=id;p.a=it.a;p.b=it.b;persist('core')}saveAct()}
  else{const p=ST.plan.days[di].items[i];p.ex=id;const ex=EX[id];if(ex.t){p.a=30;p.b=60}else if(!ex.r){p.a=Math.max(p.a,8);p.b=Math.max(p.b,15)}lift(id);persist('core')}
  closeSheet();render()}
@@ -1333,7 +1483,7 @@ function customSheet(mode){openSheet(`<div class="stack"><h2>Your own exercise</
 function saveCustom(mode){const n=$('#cxn').value.trim(),k=$('#cxk').value,p=$('#cxp').value;if(!n){toast('Give the exercise a name.');return}
  const c={id:'c'+uid(),n,k,p};ST.custom.push(c);regCustom(c);const w=fromU(+$('#cxw').value||0);ST.lifts[c.id]={w:['bw','time'].includes(k)?0:w,f:0,adj:0};doAdd(mode,c.id)}
 function doAdd(mode,id){const it=mkItem(EX[id],false,ST.goal,ST.profile);lift(id);
- if(mode=='w'){const t=targetFor(it);ACT.items.push({...it,pi:null,t,sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))});saveAct()}
+ if(mode=='w'){const t=dlAdjust(it,targetFor(it));ACT.items.push({...it,pi:null,t,wu:warmFor(it,t),sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))});saveAct()}
  else{ST.plan.days[+mode].items.push(it);persist('core')}closeSheet();render()}
 function discardW(){openSheet(`<div class="stack"><h2>Discard this workout?</h2><p class="mut">Everything you've entered for ${H(ACT.n)} will be removed.</p>
  <button class="btn pri full" onclick="ACT=null;REST=null;saveAct();closeSheet();go('today')">Discard</button><button class="btn ghost full" onclick="closeSheet()">Keep going</button></div>`)}
@@ -1349,7 +1499,7 @@ const learned=[];
   if(mx>0&&Math.min(...ws)/mx<.85){it.st='ramp';const pi=ST.plan.days[a.day]?.items[it.pi];if(pi&&pi.ex==it.ex){pi.st='ramp';learned.push(`${ex.n} now builds up to a top set, like you did today`)}}}
   delete it.pi});
  w.vol=Math.round(w.items.reduce((v,it)=>v+it.sets.reduce((x,s)=>x+s.w*s.r,0),0));
- const msgs=learned.concat(w.items.map(prog).filter(Boolean)),prs=prCheck(w);w.prs=prs.length;
+ const dl=DL(),msgs=dl?['Deload week: your weights stay the same next time.']:learned.concat(w.items.map(prog).filter(Boolean)),prs=prCheck(w);w.prs=prs.length;if(dl)w.dl=1;
  ST.workouts.push(w);if(a.day!=null&&ST.plan.days[a.day])ST.plan.next=(a.day+1)%ST.plan.days.length;
  const g=ST.goal;if(g.type=='endurance'&&!g.start){const s=cardioSeries(g.cardio,+g.km);if(s.length)g.start=Math.min(...s.map(p=>p.y))}
  if(g.type=='strength'&&!g.start){const pr=ST.prs[g.ex];if(pr)g.start=EX[g.ex].r?pr.e1:pr.mr}
@@ -1458,8 +1608,8 @@ function rebuildPRs(){const log=ST.prLog;ST.prs={};ST.prLog=[];ST.workouts.forEa
 
 // ---------- PROGRESS ----------
 function progHTML(){const t=UI.ptab;let h=`<div class="top"><div><div class="eyebrow">Proof it's working</div><h1>Progress</h1></div></div><div class="stack">
- <div class="seg" role="group" aria-label="Progress sections">${[['lifts','Lifts'],['body','Body'],['prs','Records'],['badges','Badges']].map(([k,l])=>`<button aria-pressed="${t==k}" onclick="UI.ptab='${k}';render()">${l}</button>`).join('')}</div>`;
- return h+({lifts:liftsTab,body:bodyTab,prs:prsTab,badges:badgesTab}[t]||liftsTab)()+'</div>'}
+ <div class="seg" role="group" aria-label="Progress sections">${[['lifts','Lifts'],['balance','Balance'],['body','Body'],['prs','Records'],['badges','Badges']].map(([k,l])=>`<button aria-pressed="${t==k}" onclick="UI.ptab='${k}';render()">${l}</button>`).join('')}</div>`;
+ return h+({lifts:liftsTab,balance:balanceTab,body:bodyTab,prs:prsTab,badges:badgesTab}[t]||liftsTab)()+'</div>'}
 function liftsTab(){const ids=[...new Set(ST.workouts.flatMap(w=>w.items.map(i=>i.ex)))];
  if(!ids.length)return`<section class="card"><h3>No lifts logged yet</h3><p class="mut" style="margin-top:6px">Each exercise you log gets its own chart of your estimated max over time.</p></section>`;
  if(!ids.includes(UI.liftEx))UI.liftEx=ids.includes(ST.goal.ex)?ST.goal.ex:ids[0];const id=UI.liftEx,ex=EX[id],ser=liftSeries(id),pr=ST.prs[id]||{};
@@ -1481,6 +1631,8 @@ function bodyTab(){const s=bodySeries(),tw=trendW(),g=ST.goal,wg=g.type=='fatlos
  <div class="grid2" style="margin-top:12px"><label class="f">Weight (${U()})<input id="bw" type="number" inputmode="decimal" step="any" min="20" placeholder="${tw?nf(bwv(tw),1):''}"></label><label class="f">Date<input id="bwd" type="date" value="${today()}" max="${today()}"></label></div>
  <button class="btn pri full" style="margin-top:12px" onclick="addBW()">Log weight</button>
  ${s.length?`<div class="list" style="margin-top:10px">${[...ST.body.weights].sort((a,b)=>b.d.localeCompare(a.d)).slice(0,5).map(e=>`<div class="li"><span class="sub" style="color:var(--fg);font-weight:600">${fD(e.d,{weekday:'short',day:'numeric',month:'short'})}</span><div class="row" style="flex-wrap:nowrap"><span class="val">${nf(bwv(e.kg),1)} ${U()}</span><button class="ib" aria-label="Delete weigh-in" onclick="delBW('${e.d}')">${IC.x}</button></div></div>`).join('')}</div>`:''}</section>
+ <section class="card"><div class="hd"><h3>Progress photos</h3><span class="hint">On this phone only</span></div><div id="phGrid"><p class="hint">Loading…</p></div>
+ <label class="btn sec full" style="margin-top:12px">Add photo<input id="phIn" type="file" accept="image/*" hidden onchange="photoAdd(this.files[0]);this.value=''"></label></section>
  <section class="card"><div class="hd"><h3>Measurements</h3><span class="hint">${LU()}</span></div>
  ${M.length?`<div class="tbl"><table><thead><tr><th>Area</th><th>Latest</th><th>Change</th></tr></thead><tbody>${mk.filter(([k])=>ml[k]).map(([k,l])=>{const f=M.find(x=>x[k]),dv=ml[k]-f[k];return`<tr><td>${l}</td><td>${nf(lenv(ml[k]),1)}</td><td class="${dv<0?'up':dv>0?'':''}">${M.length>1?(dv>0?'+':dv<0?'−':'')+nf(Math.abs(lenv(dv)),1):'–'}</td></tr>`}).join('')}</tbody></table></div><p class="hint" style="margin-top:6px">Change since ${fD(m0.d,{day:'numeric',month:'short',year:'numeric'})}.</p>`:'<p class="hint">Measure once a month at the same spots. Waist is the most useful one to track.</p>'}
  <div class="mgrid" style="margin-top:12px">${mk.map(([k,l])=>`<label class="f">${l}<input id="m_${k}" type="number" inputmode="decimal" step="any" min="0"></label>`).join('')}<label class="f wide">Date<input id="m_d" type="date" value="${today()}" max="${today()}"></label></div>
@@ -1512,10 +1664,13 @@ function meHTML(){const p=ST.profile,g=ST.goal,sx={m:'Male',f:'Female',x:''}[p.s
  <section class="card stack"><h3>Settings</h3>
  <div class="row sp"><span style="font-weight:600">Units</span><div class="chips">${['kg','lb'].map(u=>`<button class="chip" aria-pressed="${U()==u}" onclick="setUnits('${u}')">${u}</button>`).join('')}</div></div>
  <div class="row sp"><span style="font-weight:600">Appearance</span><div class="chips">${[['auto','Auto'],['dark','Dark'],['light','Light']].map(([k,l])=>`<button class="chip" aria-pressed="${themeMode()==k}" onclick="setTheme('${k}')">${l}</button>`).join('')}</div></div>
+ <div class="row sp"><span style="font-weight:600">Warm-up sets on main lifts</span><button class="sw" role="switch" aria-checked="${ST.settings.warm!==false}" aria-label="Warm-up sets on main lifts" onclick="ST.settings.warm=ST.settings.warm===false;persist('core');render()"></button></div>
+ <div class="row sp"><span style="font-weight:600">Deload week every</span><div class="chips">${[[0,'Off'],[4,'4 wk'],[6,'6 wk'],[8,'8 wk']].map(([v,l])=>`<button class="chip" aria-pressed="${(ST.settings.deload??6)==v}" onclick="ST.settings.deload=${v};persist('core');render()">${l}</button>`).join('')}</div></div>
+ ${ST.profile.equip.includes('bb')?`<div class="row sp"><span style="font-weight:600">Barbell and plates</span><button class="btn sec sm" onclick="platesEditor('p')">${ST.profile.plates?'Edit':'Set up'}</button></div>`:''}
  <div class="row sp"><span style="font-weight:600">Rest timer sound</span><button class="sw" role="switch" aria-checked="${ST.settings.sound}" aria-label="Rest timer sound" onclick="ST.settings.sound=!ST.settings.sound;persist('core');render()"></button></div>
  <div class="row sp"><span style="font-weight:600">Rest timer vibration</span><button class="sw" role="switch" aria-checked="${ST.settings.vib}" aria-label="Rest timer vibration" onclick="ST.settings.vib=!ST.settings.vib;persist('core');render()"></button></div></section>
  <section class="card stack"><h3>Your data</h3><p class="hint">${DEMO?'Demo mode. Nothing is saved.':STANDALONE?'Saved on this phone. Export a backup now and then, and use it to move your data to a new phone.':NOSYNC?'Kept in this browser only. Export a backup regularly.':SYNC=='cloud'?'Saved to your Claude account and on this phone. It stays private to you.':'Saved on this phone. Export a backup now and then so you never lose your history.'}</p>
- <button class="btn sec full" onclick="exportData()">Export backup</button><button class="btn sec full" onclick="$('#impFile').click()">Import backup</button>
+ <button class="btn sec full" onclick="exportData()">Export backup</button><button class="btn sec full" onclick="$('#impFile').click()">Import backup</button><p class="hint">Progress photos stay on this phone and aren't included in backups.</p>
  ${UI.conf=='reset'?`<div class="stack" style="gap:8px"><p class="warn">This deletes your profile, plan, history and records everywhere. It can't be undone.</p><div class="grid2"><button class="btn pri" onclick="resetAll()">Delete everything</button><button class="btn sec" onclick="UI.conf=null;render()">Cancel</button></div></div>`:`<button class="btn dang full" onclick="UI.conf='reset';render()">Reset everything</button>`}</section>
  <p class="hint" style="text-align:center;padding-bottom:8px">Starting weights are estimates. Use a load you can lift with good form, and get advice from a professional for pain or injuries.</p></div>`}
 function setUnits(u){ST.profile.units=u;Object.entries(ST.lifts).forEach(([id,L])=>{if(L.w>0)L.w=roundW(L.w,EX[id].k)});persist('core');render()}
@@ -1538,15 +1693,16 @@ async function applyImport(s){const old=ST?ST.workouts.map(w=>w.id):[];DEMO=fals
 async function resetAll(){const ids=ST?ST.workouts.map(w=>w.id):[];
  if(D&&!DEMO){pend.clear();try{const ws=await colW().get();for(const d of ws.docs)await colW().doc(d.id).delete()}catch(e){for(const id of ids){try{await colW().doc(id).delete()}catch(x){}}}
   for(const r of[refCore(),refBody(),refAct()]){try{await r.delete()}catch(e){}}}
+ try{await ptx('readwrite',s=>s.clear())}catch(e){}
  ST=null;ACT=null;DEMO=false;REST=null;UI.conf=null;try{localStorage.removeItem(LSK);localStorage.removeItem(LSA)}catch(e){}WIZ=newWiz(false);closeSheet();render();scrollTo(0,0)}
 
 // ---------- SETUP WIZARD ----------
 const STEPS=['start','you','train','kit','limits','goal','target','review'];
 function newWiz(edit){const p=edit&&ST?ST.profile:null,g=edit&&ST?ST.goal:null;
  return{step:0,edit:!!edit,only:0,err:'',d:{name:p?.name||'',units:p?.units||'kg',sex:p?.sex||'',age:p?.age||'',hCm:p?.heightCm||'',wKg:p?.weightKg||'',exp:p?.exp||'',days:p?.days||3,mins:p?.mins||60,
-  equip:p?[...p.equip]:['db','bench'],dbMax:p?.dbMax||'',kbs:p?[...(p.kbs||[])]:[],blocked:p?[...(p.blocked||[])]:[],limits:p?[...p.limits]:[],goal:g?clone(g):{type:''}}}}
+  equip:p?[...p.equip]:['db','bench'],dbMax:p?.dbMax||'',plates:p&&p.plates?clone(p.plates):null,kbs:p?[...(p.kbs||[])]:[],blocked:p?[...(p.blocked||[])]:[],limits:p?[...p.limits]:[],goal:g?clone(g):{type:''}}}}
 const wd=()=>WIZ.d;
-function draftProfile(){const d=wd();return{name:d.name.trim(),units:d.units,sex:d.sex||'x',age:+d.age,heightCm:+d.hCm,weightKg:+d.wKg,exp:d.exp,days:+d.days,mins:+d.mins,equip:[...d.equip],dbMax:+d.dbMax||0,kbs:[...d.kbs],blocked:[...d.blocked],limits:[...d.limits],eqV:2}}
+function draftProfile(){const d=wd();return{name:d.name.trim(),units:d.units,sex:d.sex||'x',age:+d.age,heightCm:+d.hCm,weightKg:+d.wKg,exp:d.exp,days:+d.days,mins:+d.mins,equip:[...d.equip],dbMax:+d.dbMax||0,plates:d.equip.includes('bb')?clone(d.plates||defPlates(d.units)):null,kbs:[...d.kbs],blocked:[...d.blocked],limits:[...d.limits],eqV:2}}
 function wz(k,v,re){wd()[k]=v;WIZ.err='';if(re)render()}
 function wzTog(k,v){const a=wd()[k],i=a.indexOf(v);i<0?a.push(v):a.splice(i,1);render()}
 function wzKb(v){const kg=fromU(v),a=wd().kbs,i=a.findIndex(x=>Math.abs(x-kg)<.3);i<0?a.push(kg):a.splice(i,1);render()}
@@ -1594,6 +1750,7 @@ function wizHTML(){const s=STEPS[WIZ.step],d=wd(),n=STEPS.length;let h=`<div cla
  if(s=='kit'){const kbOn=d.equip.includes('kb'),dbOn=d.equip.includes('db');
   h+=`<h2>Your equipment</h2><p class="mut">Tick only what you can actually use. For an all-in-one machine, tick each station it has. Bodyweight moves are always included.</p>
   ${EQG.map(([g,L])=>`<div><div class="eyebrow" style="margin-bottom:8px">${g}</div>${chipsH('equip',L,1)}</div>`).join('')}
+  ${d.equip.includes('bb')?`<div class="card" style="padding:14px"><h3 style="margin-bottom:10px">Your barbell and plates</h3>${plEditHTML(d.plates||(d.plates=defPlates(d.units)),'w')}</div>`:''}
   ${dbOn?`<label class="f">Heaviest dumbbell (${U()})<input type="number" inputmode="decimal" step="any" value="${d.dbMax?wv(d.dbMax):''}" placeholder="Leave blank for a full set" onchange="wz('dbMax',fromU(+this.value)||'')"></label>`:''}
   ${kbOn?`<div><div class="eyebrow" style="margin-bottom:8px">Kettlebells you own</div><div class="chips">${KBW[U()].map(v=>{const kg=fromU(v),on=d.kbs.some(x=>Math.abs(x-kg)<.3);return`<button class="chip" aria-pressed="${on}" onclick="wzKb(${v})">${v} ${U()}</button>`}).join('')}</div><p class="hint" style="margin-top:6px">Kettlebell exercises use these exact weights and step up to your next bell.</p></div>`:''}
   <p class="hint">If something in your plan still isn't possible, you can rule it out on the next screens or any time later.</p>`}
