@@ -527,6 +527,9 @@ div.opt::after{display:none}div.opt{padding-right:0}
 .card.stack>.row.sp{gap:12px}.card.stack>.row.sp .chips{gap:6px;flex-wrap:nowrap}
 .card.stack>.row.sp .chip{min-height:34px;padding:5px 11px;font-size:13px}
 .figbig{background:none;padding:6px 0 0}
+.nxi,.pli{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.nxi .th,.pli .th{width:38px;height:42px;margin-left:-4px}
+.exh{grid-template-columns:auto auto minmax(0,1fr) auto}.exh .th{margin-top:2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -1530,8 +1533,8 @@ function todayHTML(){const t=today(),gs=gStat(),days=ST.plan.days,ni=days.length
   <p class="hint"><b style="color:var(--fg)">${c} of ${tg0} done.</b> ${st?`${st}-week streak at your target.`:c>=tg0?'Target hit, and that starts a streak.':'Hit your weekly target to start a streak.'}</p></section>`;
  if(!nd)h+=`<section class="card"><h3>Your plan has no days</h3><p class="mut" style="margin-top:6px">Add a day with your exercises, or switch to another plan.</p><button class="btn pri full" style="margin-top:14px" onclick="go('plan')">Open plan</button><button class="btn ghost full" onclick="cardioSheet()">Log cardio only</button></section>`;
  else{h+=`<section class="card"><div class="dh"><h2>${H(nd.n)}</h2><span class="min">About ${dayMin(nd)} min</span></div><div class="nxl">`;
-  nd.items.forEach(it=>{const ex=EX[it.ex],tg=targetFor(it);h+=`<div class="nxi"><div style="min-width:0"><button class="n exn" onclick="guide('${it.ex}')">${ex.n}${it.m?'<i class="dotm" title="Main lift"></i>':''}</button><div class="s">${tg.ramp?`${tg.sets.length} sets, building up`:`${it.s} × ${tg.r}${ex.t?' sec':''}`}</div></div>${wkLbl(tg.w,ex)}</div>`});
-  if(nd.cardio)h+=`<div class="nxi"><div class="n">${CARDIO[nd.cardio.type][0]}</div><span class="big-w">${nd.cardio.min}<small>min</small></span></div>`;
+  nd.items.forEach(it=>{const ex=EX[it.ex],tg=targetFor(it);h+=`<div class="nxi">${thumb(it.ex)}<div style="min-width:0"><button class="n exn" onclick="guide('${it.ex}')">${ex.n}${it.m?'<i class="dotm" title="Main lift"></i>':''}</button><div class="s">${tg.ramp?`${tg.sets.length} sets, building up`:`${it.s} × ${tg.r}${ex.t?' sec':''}`}</div></div>${wkLbl(tg.w,ex)}</div>`});
+  if(nd.cardio)h+=`<div class="nxi"><span></span><div class="n">${CARDIO[nd.cardio.type][0]}</div><span class="big-w">${nd.cardio.min}<small>min</small></span></div>`;
   h+=`</div><button class="gobtn" onclick="startW(${ni})" ${ACT?'disabled':''}><i></i>Start ${H(nd.n)}</button>
   ${days.length>1?`<div class="row" style="margin-top:14px"><span class="hint">Or do</span>${days.map((d,i)=>i==ni?'':`<button class="chip" onclick="startW(${i})" ${ACT?'disabled':''}>${H(d.n)}</button>`).join('')}</div>`:''}
   <button class="btn ghost full" style="margin-top:4px" onclick="cardioSheet()">Log cardio only</button></section>`}
@@ -1842,7 +1845,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState=='
 function startW(di){if(ACT){go('workout');return}ACT=newActive(di);saveAct();VIEW='workout';wake();render();window.scrollTo(0,0)}
 function exCard(it,i){const G=ssGroups(ACT.items)[i],ex=EX[it.ex],t=it.t||{w:0,r:it.a,a:it.a,b:it.b},last=lastSets(it.ex),band=ex.k=='band',u=ex.t?'sec':'reps';
  const lastTxt=last?last.map(s=>(s.w>0?fw(s.w)+'×':'')+s.r).join(', '):'';
- return`<section class="card${G?' ssc':''}" id="ex${i}"><div class="exh"><div class="exno" aria-hidden="true">${i+1}</div><div style="min-width:0">${G?`<div class="eyebrow" style="color:var(--blue)">Superset ${G.lt}, ${G.n} of ${G.of}</div>`:''}<button class="exn" onclick="guide('${it.ex}')"><h3>${ex.n}</h3></button>
+ return`<section class="card${G?' ssc':''}" id="ex${i}"><div class="exh"><div class="exno" aria-hidden="true">${i+1}</div>${thumb(it.ex)}<div style="min-width:0">${G?`<div class="eyebrow" style="color:var(--blue)">Superset ${G.lt}, ${G.n} of ${G.of}</div>`:''}<button class="exn" onclick="guide('${it.ex}')"><h3>${ex.n}</h3></button>
   <div class="sub">${t.ramp?`Build up to <span class="tgt">${fwu(t.w)} × ${t.r}</span>`:`Target <span class="tgt">${t.w>0?fwu(t.w)+' × ':''}${t.r} ${u}</span>`}. Range ${t.a}–${t.b}, rest ${mmss(it.r)}${t.dl?' <span class="tag" style="color:var(--blue)">Deload</span>':''}</div>
   <div class="sub" style="color:var(--dim)">${last?'Last time '+lastTxt:'First time: this sets your baseline'}</div>
   <div class="lnk"><button onclick="guide('${it.ex}')">How to</button>${last?`<button onclick="exHist('${it.ex}')">History</button>`:''}${ex.k=='bb'&&plCfg()?`<button onclick="platesSheet(${i})">Plates</button>`:''}</div></div>
@@ -1994,8 +1997,8 @@ function planHTML(){const days=ST.plan.days,ni=days.length?ST.plan.next%days.len
  days.forEach((d,di)=>{const G=ssGroups(d.items);h+=`<section class="card day${di==ni?' upnext':''}">${di==ni?'<div class="upn"><i></i>Up next</div>':''}<div class="dh"><h2>${H(d.n)}</h2><span class="min">${dayMin(d)} min</span>${di!=ni?`<button class="btn sec sm" onclick="ST.plan.next=${di};persist('core');render()">Do next</button>`:''}<button class="ib" aria-label="Edit ${H(d.n)}" onclick="daySheet(${di})">${IC.more}</button></div>`;
   if(!d.items.length&&!d.cardio)h+=`<p class="hint" style="margin-top:10px">No exercises yet.</p>`;
   else{h+='<div class="plist">';d.items.forEach((it,i)=>{const ex=EX[it.ex],L=ST.lifts[it.ex],g=G[i],sc=g?(g.n==1?' ssf':g.n==g.of?' ssl':' ssm'):'';
-    h+=`<button class="pli${sc}" onclick="itemSheet(${di},${i})"><div style="min-width:0"><div class="n">${ex.n}${it.m?'<i class="dotm" title="Main lift"></i>':''}</div><div class="s">${isRamp(it)?(L&&L.pat?L.pat.length:it.s)+' sets building up':it.s+' sets'}, ${it.a}–${it.b} ${ex.t?'sec':'reps'}, rest ${mmss(it.r)}${g?`<span class="tag" style="color:var(--blue)">Superset ${g.lt}${g.n}</span>`:''}</div></div>${wkLbl(L?L.w:0,ex)}</button>`});
-   if(d.cardio)h+=`<div class="pli"><div class="n">${CARDIO[d.cardio.type][0]}</div><span class="big-w">${d.cardio.min}<small>min</small></span></div>`;h+='</div>'}
+    h+=`<button class="pli${sc}" onclick="itemSheet(${di},${i})"><span class="th" aria-hidden="true">${figSVG(it.ex)}</span><div style="min-width:0"><div class="n">${ex.n}${it.m?'<i class="dotm" title="Main lift"></i>':''}</div><div class="s">${isRamp(it)?(L&&L.pat?L.pat.length:it.s)+' sets building up':it.s+' sets'}, ${it.a}–${it.b} ${ex.t?'sec':'reps'}, rest ${mmss(it.r)}${g?`<span class="tag" style="color:var(--blue)">Superset ${g.lt}${g.n}</span>`:''}</div></div>${wkLbl(L?L.w:0,ex)}</button>`});
+   if(d.cardio)h+=`<div class="pli"><span></span><div class="n">${CARDIO[d.cardio.type][0]}</div><span class="big-w">${d.cardio.min}<small>min</small></span></div>`;h+='</div>'}
   h+=`<button class="addx" onclick="addExSheet('${di}')"><i>+</i>Add exercise</button></section>`});
  h+=`<button class="btn full dash" style="margin:20px 0" onclick="addDay()">Add a day</button>
  <section class="card"><h3>How the plan pushes you</h3><p class="hint" style="margin-top:8px">Each exercise has a rep range. When you hit the top of the range on every set (or on your top set, for build-up lifts), the weight goes up next time. Build-up lifts copy the pattern you actually lift, so if you go 60, 80, 80, 90 the next session ramps the same way to the new top weight. Miss the bottom of the range twice in a row and it drops 10% so you can build back. Bodyweight moves raise the rep range instead. If you tell it how the last set felt, an easy set earns a bigger jump and a hard one holds the weight for one more session.</p>
