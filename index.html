@@ -395,7 +395,7 @@ div.opt::after{display:none}div.opt{padding-right:0}
 .bdg .disc{background:none;border:2px dashed var(--line2)}
 .bdg.got .disc{border:9px solid var(--c);background:var(--bg);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 40%,transparent)}
 /* ---- Today ---- */
-.ghero{position:relative;min-height:282px;margin:22px -20px 0;padding:0 20px;overflow:hidden}
+.ghero{position:relative;min-height:326px;margin:22px -20px 0;padding:0 20px;overflow:hidden}
 .ghero .gp{position:absolute;right:-128px;top:-4px;width:320px;height:320px}
 .ghero .gt{position:relative;width:min(232px,60%)}
 .ghero .gw{font-weight:700;font-size:15px}
@@ -403,9 +403,9 @@ div.opt::after{display:none}div.opt{padding-right:0}
 .ghero .gbig small{font:700 24px var(--fd);color:var(--mut);margin-left:4px}
 .ghero .gsub{color:var(--mut);font-size:13.5px;margin-top:12px}
 .ghero .gst{margin-top:14px}
-.gp .rim{fill:var(--surf)}.gp .rk{fill:none;stroke:var(--line);stroke-width:1.5}.gp .tr{fill:none;stroke:var(--surf2);stroke-width:22}
-.gp .hub{fill:var(--surf2)}.gp .hole{fill:var(--bg)}.gp text{fill:var(--dim);font:800 7.5px var(--fd);letter-spacing:2.2px}
-.gp .pl-p{stroke-width:22;stroke-linecap:butt}
+.gp .rim{fill:var(--surf)}.gp .rk{fill:none;stroke:var(--line);stroke-width:1.5}.gp .tr{fill:none;stroke:var(--surf2);stroke-width:18}
+.gp .hub{fill:var(--surf2)}.gp .hole{fill:var(--bg)}.gp text{fill:var(--mut);font-family:var(--fd);font-weight:800;letter-spacing:1.4px;opacity:.8}
+.gp .pl-p{stroke-width:18;stroke-linecap:butt}
 .wkb{position:relative;height:96px;margin:12px -20px 0}
 .wkb .shaft{position:absolute;left:0;right:0;top:34px;height:6px;background:linear-gradient(var(--line2),var(--surf2))}
 .wkb .shaft::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(60deg,transparent 0 3px,rgba(0,0,0,.28) 3px 4px)}
@@ -564,6 +564,7 @@ body.lnd{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
 .lqr{margin-top:18px}
 .lfoot{display:grid;gap:14px;justify-items:center;padding:22px 0 10px}
 .lfoot .link{color:var(--mut);font-size:14px}
+@media (max-width:370px){.ghero .gp{right:-200px}.ghero .gt{width:170px}.land .lhero .gp{right:-200px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -1547,10 +1548,12 @@ function coach(gs,next){const st=streak(),c=weekCounts()[monday(today())]||0,tgt
  if(gs.status=='done')return`Goal reached. Set a bigger one in Me so there's always something to chase.`;
  if(gs.status=='over')return`Your goal date has passed. Pick a new date or a new target in Me.`;
  return`${gs.eta?`At this pace you'll hit it around <b>${fD(gs.eta)}</b>. `:''}${wk}`}
-function goalPlate(gs){const R=80,C=2*Math.PI*R,pct=gs.pct||0,off=C*(1-pct);let k='';for(let i=0;i<60;i++){const a=i/60*Math.PI*2;k+=`<line class="rk" x1="${(100+Math.cos(a)*94).toFixed(1)}" y1="${(100+Math.sin(a)*94).toFixed(1)}" x2="${(100+Math.cos(a)*97).toFixed(1)}" y2="${(100+Math.sin(a)*97).toFixed(1)}"/>`}
- const rim=('Goal '+gs.title.replace(': ',' ')+'  ·  Overload  ·  ').toUpperCase();
- return`<svg class="gp" viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="gpg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red2)"/></linearGradient><path id="gpr" d="M100 100m-87 0a87 87 0 1 1 174 0a87 87 0 1 1-174 0"/></defs>
- <circle class="rim" cx="100" cy="100" r="99"/>${k}<text><textPath href="#gpr">${H(rim)}</textPath></text>
+const RIM=(()=>{const p=a=>[(100+86*Math.cos(a*Math.PI/180)).toFixed(1),(100+86*Math.sin(a*Math.PI/180)).toFixed(1)];const [x1,y1]=p(148),[x2,y2]=p(268);return`M${x1} ${y1}A86 86 0 0 1 ${x2} ${y2}`})();
+const rimFs=t=>Math.min(9.5,170/(t.length*.66)).toFixed(2);
+function goalPlate(gs){const R=73,C=2*Math.PI*R,pct=gs.pct||0,off=C*(1-pct);let k='';for(let i=0;i<60;i++){const a=i/60*Math.PI*2;k+=`<line class="rk" x1="${(100+Math.cos(a)*95.5).toFixed(1)}" y1="${(100+Math.sin(a)*95.5).toFixed(1)}" x2="${(100+Math.cos(a)*98).toFixed(1)}" y2="${(100+Math.sin(a)*98).toFixed(1)}"/>`}
+ const rim=('Goal: '+gs.title.replace(': ',' ')).toUpperCase();
+ return`<svg class="gp" viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="gpg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red2)"/></linearGradient><path id="gpr" d="${RIM}"/></defs>
+ <circle class="rim" cx="100" cy="100" r="99"/>${k}<text text-anchor="middle" style="font-size:${rimFs(rim)}px"><textPath href="#gpr" startOffset="50%">${H(rim)}</textPath></text>
  <circle class="tr" cx="100" cy="100" r="${R}"/><circle class="pl-p" cx="100" cy="100" r="${R}" stroke="url(#gpg)" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${off.toFixed(1)}" transform="rotate(180 100 100)"/>
  <circle class="hub" cx="100" cy="100" r="24"/><circle class="hole" cx="100" cy="100" r="10"/></svg>`}
 const bigU=t=>String(t).replace(/^(.+?)\s(kg|lb|reps|s|min|wk|km)$/,'$1<small>$2</small>');
@@ -1899,8 +1902,8 @@ function landSteps(){const pf=platform(),open=`Open <b>Overload</b> from your Ho
  if(pf=='desktop')return`<div class="lqr" id="lqr"></div><p class="mut" style="text-align:center;margin-top:12px">Overload is made for your phone. Point its camera at this code, then follow the steps it shows.</p>`;
  return`<ol class="lsteps">${S[pf].map(t=>`<li><span>${t}</span></li>`).join('')}</ol>${pf=='android'&&BIP?`<button class="gobtn" onclick="doInstall()"><i></i>Install Overload</button>`:''}`}
 function landingHTML(){const pf=platform(),m=location.hash.match(/plan=([A-Za-z0-9_-]+)/)||(()=>{try{const c=localStorage.getItem('overload.pend');return c?[0,c]:null}catch(e){return null}})();
- const R=80,C=2*Math.PI*R;let k='';for(let i=0;i<60;i++){const a=i/60*Math.PI*2;k+=`<line class="rk" x1="${(100+Math.cos(a)*94).toFixed(1)}" y1="${(100+Math.sin(a)*94).toFixed(1)}" x2="${(100+Math.cos(a)*97).toFixed(1)}" y2="${(100+Math.sin(a)*97).toFixed(1)}"/>`}
- return`<div class="land"><div class="lhero"><svg class="gp" viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="lpg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red2)"/></linearGradient><path id="lpr" d="M100 100m-87 0a87 87 0 1 1 174 0a87 87 0 1 1-174 0"/></defs><circle class="rim" cx="100" cy="100" r="99"/>${k}<text><textPath href="#lpr">PICK A GOAL  ·  THEN BEAT IT  ·  OVERLOAD  ·  </textPath></text><circle class="tr" cx="100" cy="100" r="${R}"/><circle class="pl-p" cx="100" cy="100" r="${R}" stroke="url(#lpg)" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C*.3).toFixed(1)}" transform="rotate(180 100 100)"/><circle class="hub" cx="100" cy="100" r="24"/><circle class="hole" cx="100" cy="100" r="10"/></svg>
+ const R=73,C=2*Math.PI*R;let k='';for(let i=0;i<60;i++){const a=i/60*Math.PI*2;k+=`<line class="rk" x1="${(100+Math.cos(a)*95.5).toFixed(1)}" y1="${(100+Math.sin(a)*95.5).toFixed(1)}" x2="${(100+Math.cos(a)*98).toFixed(1)}" y2="${(100+Math.sin(a)*98).toFixed(1)}"/>`}
+ return`<div class="land"><div class="lhero"><svg class="gp" viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="lpg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red2)"/></linearGradient><path id="lpr" d="${RIM}"/></defs><circle class="rim" cx="100" cy="100" r="99"/>${k}<text text-anchor="middle" style="font-size:9.5px"><textPath href="#lpr" startOffset="50%">PICK A GOAL. THEN BEAT IT.</textPath></text><circle class="tr" cx="100" cy="100" r="${R}"/><circle class="pl-p" cx="100" cy="100" r="${R}" stroke="url(#lpg)" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C*.3).toFixed(1)}" transform="rotate(180 100 100)"/><circle class="hub" cx="100" cy="100" r="24"/><circle class="hole" cx="100" cy="100" r="10"/></svg>
   <div class="lt"><div class="eyebrow">Free gym app</div><h1>Overload</h1><p>A training plan built around your kit and your body. Every session gives you a number to beat.</p></div></div>
  ${UI.installed?`<section class="lbox"><h2>It's on your Home Screen</h2><p class="mut" style="margin-top:8px">Close this page and open <b style="color:var(--fg)">Overload</b> from your Home Screen to set it up.</p></section>`:
  `<section class="lbox"><h2>${pf=='desktop'?'Get it on your phone':'Add it to your Home Screen'}</h2>${pf=='desktop'?'':`<p class="mut" style="margin-top:8px">It then opens full screen like any other app, works without signal, and keeps your data on your phone.</p>`}${landSteps()}</section>`}
