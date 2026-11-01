@@ -1553,7 +1553,7 @@ function render(){applyTheme();const app=$('#app'),nav=$('#nav');
  nav.hidden=false;$('#navIn').innerHTML=navHTML();$('#timer').hidden=true;
  app.innerHTML=numU(demoBar()+(VIEW=='today'||VIEW=='me'?syncWarn():'')+(VIEW=='today'?installCard():'')+({today:todayHTML,plan:planHTML,log:logHTML,progress:progHTML,me:meHTML}[VIEW]||todayHTML)());
  if(VIEW=='progress'&&UI.ptab=='body')photoRender();else photoClear();
- if(ST&&!DEMO&&((ST.settings.news||0)<NEWS||ST.settings.newsStep!=null)&&!NEWSQ){NEWSQ=1;setTimeout(newsCheck,isSA()?2300:600)}
+ if(ST&&!DEMO&&((ST.settings.news||0)<NEWS||ST.settings.newsStep!=null||(!ST.settings.redo&&/^matt$/i.test((ST.profile.name||'').trim())))&&!NEWSQ){NEWSQ=1;setTimeout(newsCheck,isSA()?2300:600)}
  requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off})}
 
 // ---------- charts ----------
@@ -1958,7 +1958,9 @@ async function landQR(){const el=$('#lqr');if(!el)return;try{await loadQR();el.i
 const NEWS=2;let NEWSQ=0;
 function keepRamp(pl){pl.days.forEach(d=>d.items.forEach(it=>{const L=ST.lifts[it.ex];if(it.m&&EX[it.ex].r&&L&&L.pat&&L.pat.length>=2&&Math.min(...L.pat)<.85)it.st='ramp'}))}
 function newsCheck(){NEWSQ=0;if(!ST||DEMO||WIZ||ACT||VIEW=='workout'||!$('#sheet').hidden)return;
- if((ST.settings.news||0)<NEWS){ST.settings.news=NEWS;tour(0);return}
+ if((ST.settings.news||0)<NEWS){ST.settings.news=NEWS;ST.settings.redo=1;tour(0);return}
+ // one repeat, for Matt only: he saw the earlier version that rebuilt the plan without asking. Anyone else who saw it is left alone, so nobody gets both.
+ if(ST.settings.news==NEWS&&!ST.settings.redo&&ST.settings.newsStep==null&&/^matt$/i.test((ST.profile.name||'').trim())){ST.settings.redo=1;tour(0);return}
  if(ST.settings.newsStep!=null)tour(ST.settings.newsStep)}
 // a short walkthrough: goals first (they shape the plan), then the plan. Nothing changes unless they choose it.
 function tour(st){ST.settings.newsStep=st;persist('core');let h='';const step=(n,t)=>`<div class="eyebrow">${n} of 2: ${t}</div>`;
@@ -2419,7 +2421,7 @@ function targetStep(){const g=wd().goal,rc=isRecomp(g),ex=(g.also||[]).map((a,i)
 function finishWiz(){const e=wizValid();if(e){WIZ.err=e;render();return}
  const p=draftProfile(),g=finalGoal(wd().goal),t=today(),prevG=allG().map(clone);
  const sameGoal=ST&&ST.goal&&['type','ex','target','date','cardio','km','time','sessions','weeks','waist'].every(k=>ST.goal[k]==g[k]);
- if(!ST){ST=norm({v:1,profile:p,goal:g,settings:{theme:themeMode(),news:NEWS},plan:buildPlan(p,g),body:{weights:[{d:t,kg:p.weightKg}],meas:[]},workouts:[]})}
+ if(!ST){ST=norm({v:1,profile:p,goal:g,settings:{theme:themeMode(),news:NEWS,redo:1},plan:buildPlan(p,g),body:{weights:[{d:t,kg:p.weightKg}],meas:[]},workouts:[]})}
  else{const old=ST.profile,planKeys=['days','mins','exp'].some(k=>old[k]!=p[k])||old.equip.join()!=p.equip.join()||old.limits.join()!=p.limits.join()||(old.blocked||[]).join()!=p.blocked.join()||(old.kbs||[]).join()!=p.kbs.join()||ST.goal.type!=g.type||(ST.goal.also||[]).map(a=>a.type).join()!=g.also.map(a=>a.type).join();
   if(Math.abs(old.weightKg-p.weightKg)>.05){ST.body.weights=ST.body.weights.filter(e=>e.d!=t);ST.body.weights.push({d:t,kg:p.weightKg})}
   ST.profile=p;if(sameGoal)Object.assign(g,{start:ST.goal.start,startDate:ST.goal.startDate});ST.goal=g;if(planKeys&&ST.plan.auto)ST.plan=Object.assign(buildPlan(p,g),{id:ST.plan.id,name:ST.plan.name})}
