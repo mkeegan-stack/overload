@@ -1553,6 +1553,7 @@ function render(){applyTheme();const app=$('#app'),nav=$('#nav');
  nav.hidden=false;$('#navIn').innerHTML=navHTML();$('#timer').hidden=true;
  app.innerHTML=numU(demoBar()+(VIEW=='today'||VIEW=='me'?syncWarn():'')+(VIEW=='today'?installCard():'')+({today:todayHTML,plan:planHTML,log:logHTML,progress:progHTML,me:meHTML}[VIEW]||todayHTML)());
  if(VIEW=='progress'&&UI.ptab=='body')photoRender();else photoClear();
+ if(ST&&!DEMO&&(ST.settings.news||0)<NEWS&&!NEWSQ){NEWSQ=1;setTimeout(newsCheck,isSA()?2300:600)}
  requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off})}
 
 // ---------- charts ----------
@@ -1951,6 +1952,22 @@ function landingHTML(){const pf=platform(),m=location.hash.match(/plan=([A-Za-z0
  ${m&&pf!='desktop'?`<section class="lbox lplan"><h3>Someone shared a plan with you</h3><p class="mut" style="margin-top:6px">Copy the link now. Once Overload is set up, go to Plan, then Plans, then Import a shared plan, and paste it.</p><button class="btn sec full" style="margin-top:12px" onclick="navigator.clipboard.writeText(planLink('${m[1]}')).then(()=>toast('Link copied')).catch(()=>toast('Copy the address from the bar above'))">Copy plan link</button></section>`:''}
  <div class="lfoot"><button class="link" onclick="useWeb()">Use it in this browser instead</button><button class="link" onclick="startDemo()">Look around with demo data</button></div></div>`}
 async function landQR(){const el=$('#lqr');if(!el)return;try{await loadQR();el.innerHTML=qrSVG(APPURL())}catch(e){el.innerHTML=`<p class="mut" style="text-align:center">${H(APPURL())}</p>`}}
+
+// ---------- one-time update for people who already had a profile (November 2026: research-based plans, extra goals) ----------
+// Shown once per profile, never in demo mode or before setup. The flag is saved the moment it shows, so it can't appear twice.
+const NEWS=2;let NEWSQ=0;
+function keepRamp(pl){pl.days.forEach(d=>d.items.forEach(it=>{const L=ST.lifts[it.ex];if(it.m&&EX[it.ex].r&&L&&L.pat&&L.pat.length>=2&&Math.min(...L.pat)<.85)it.st='ramp'}))}
+function newsCheck(){NEWSQ=0;if(!ST||DEMO||WIZ||ACT||VIEW=='workout'||(ST.settings.news||0)>=NEWS||!$('#sheet').hidden)return;
+ ST.settings.news=NEWS;const old=clone(ST.plan),pl=buildPlan(ST.profile,ST.goal);keepRamp(pl);
+ pl.id=ST.plan.id;pl.name=old.auto?'Built for you':old.name;old.id=uid();old.name=(old.name||'Plan')+' (before update)';ST.shelf.unshift(old);ST.plan=pl;ensureLifts();persist('core');render();
+ openSheet(`<div class="stack"><div><div class="eyebrow">Overload update</div><h2>Your plan has been rebuilt</h2></div>
+ <p>Two things are new:</p>
+ <div class="list"><div class="li"><div><div class="nm">Plans follow the research more closely</div><div class="sub">Every muscle is trained at least twice a week with enough sets to grow, rest is long enough to lift well, and endurance plans use heavier leg work.</div></div></div>
+ <div class="li"><div><div class="nm">More than one goal</div><div class="sub">Keep your main goal and add up to two more, like getting stronger while losing fat.</div></div></div></div>
+ <p class="hint">Your history, records and working weights haven't changed. Your previous plan is saved under Plan, then Plans, as "${H(old.name)}".</p>
+ <button class="btn pri full" onclick="closeSheet();go('plan')">See my new plan</button>
+ <button class="btn sec full" onclick="closeSheet();WIZ=newWiz(true);WIZ.step=STEPS.indexOf('goal');WIZ.only=1;render();scrollTo(0,0)">Add another goal</button>
+ <button class="btn ghost full" onclick="usePlan('${old.id}')">Go back to my previous plan</button></div>`)}
 
 function newActive(di){const day=ST.plan.days[di];return{id:uid(),day:di,n:day.n,start:Date.now(),
  items:day.items.map((it,pi)=>{const t=dlAdjust(it,targetFor(it));return{...clone(it),pi,t,wu:warmFor(it,t),sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))}}),
@@ -2389,7 +2406,7 @@ function targetStep(){const g=wd().goal,rc=isRecomp(g),ex=(g.also||[]).map((a,i)
 function finishWiz(){const e=wizValid();if(e){WIZ.err=e;render();return}
  const p=draftProfile(),g=finalGoal(wd().goal),t=today(),prevG=allG().map(clone);
  const sameGoal=ST&&ST.goal&&['type','ex','target','date','cardio','km','time','sessions','weeks','waist'].every(k=>ST.goal[k]==g[k]);
- if(!ST){ST=norm({v:1,profile:p,goal:g,settings:{theme:themeMode()},plan:buildPlan(p,g),body:{weights:[{d:t,kg:p.weightKg}],meas:[]},workouts:[]})}
+ if(!ST){ST=norm({v:1,profile:p,goal:g,settings:{theme:themeMode(),news:NEWS},plan:buildPlan(p,g),body:{weights:[{d:t,kg:p.weightKg}],meas:[]},workouts:[]})}
  else{const old=ST.profile,planKeys=['days','mins','exp'].some(k=>old[k]!=p[k])||old.equip.join()!=p.equip.join()||old.limits.join()!=p.limits.join()||(old.blocked||[]).join()!=p.blocked.join()||(old.kbs||[]).join()!=p.kbs.join()||ST.goal.type!=g.type||(ST.goal.also||[]).map(a=>a.type).join()!=g.also.map(a=>a.type).join();
   if(Math.abs(old.weightKg-p.weightKg)>.05){ST.body.weights=ST.body.weights.filter(e=>e.d!=t);ST.body.weights.push({d:t,kg:p.weightKg})}
   ST.profile=p;if(sameGoal)Object.assign(g,{start:ST.goal.start,startDate:ST.goal.startDate});ST.goal=g;if(planKeys&&ST.plan.auto)ST.plan=Object.assign(buildPlan(p,g),{id:ST.plan.id,name:ST.plan.name})}
