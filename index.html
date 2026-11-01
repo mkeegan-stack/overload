@@ -965,10 +965,13 @@ function trep(k,ph){const tp=tempoOf(k);if(!tp)return null;let t=(((ph%1)+1)%1)*
   if(tp.peak)e=m=='c'?.35+.65*easeIO(u):m=='h'?1:m=='e'?1-.55*u:.4;
   else e=m=='e'?.3+.32*u:m=='p'?.65:m=='c'?(u<.5?.65+.35*u/.5:u<.8?1:1-.68*(u-.8)/.2):.3;
   return{x,e,m}}}
-function pose3(k,ph,ex){let A=spec3(k);const G=G3[k]||{},n=(ex.n||'').toLowerCase(),tr=trep(k,ph);let P=alerp(A.A,A.B,tr?tr.x:aphase(ph,A.hold));
+const isAlt=ex=>/alternat/i.test(ex&&ex.n||'');
+const altPh=ph=>{ph=((ph%1)+1)%1;return ph<.5?[ph*2,0]:[0,(ph-.5)*2]};
+function pose3(k,ph,ex){let A=spec3(k);const G=G3[k]||{},n=(ex.n||'').toLowerCase(),alt=isAlt(ex),[phR,phL]=alt?altPh(ph):[ph,ph],tr=trep(k,phR);let P=alerp(A.A,A.B,tr?tr.x:aphase(phR,A.hold));
  const bbBack=ex.k=='bb'&&BBBACK.includes(k);
  if(bbBack){A={...A,rel:1};P={...P,hr:undefined,h:undefined,hp:undefined,u:200,f:12}}
  const J=apose(A,P),v3=(p,z)=>[p[0],AG-p[1],z];
+ if(alt&&!bbBack){const t2=trep(k,phL),P2=alerp(A.A,A.B,t2?t2.x:aphase(phL,A.hold)),J2=apose(A,P2);J.el2=J2.el;J.wr2=J2.wr;['u','f','qa','qf'].forEach(q=>{if(P2[q]!=null&&P[q+'2']==null)P[q+'2']=P2[q]})}
  let gz=(P.gz??G.gz??11)*(/close|narrow|diamond|triceps position/.test(n)?.55:/wide/.test(n)?1.3:1);if(bbBack)gz=21;
  const fz=(G.fz??6)*(/wide stance|plie/.test(n)?1.5:/narrow/.test(n)?.7:1);
  const o={J,P,A,k,gz};o.hipC=v3(J.hp,0);o.hipR=v3(J.hp,5.5);o.hipL=v3(J.hp,-5.5);o.shC=v3(J.sh,0);o.shR=v3(J.sh,11);o.shL=v3(J.sh,-11);o.head=v3(J.hd,0);
@@ -1192,7 +1195,7 @@ function colors3(id){const M=R3.M;if(!M||!R3.cloth)return;const T=R3.T,cs=getCom
  R3.main=main;R3.sec=sec;R3.rest=rest;R3.red=red;C.needsUpdate=true;
  if(M.joints)M.joints.material.color.copy(base).multiplyScalar(dark?.9:.94);
  pulse3(ANI&&ANI.pp!=null?ANI.pp:.5)}
-function pulse3(ph){const M=R3.M;if(!M||!R3.rest||!R3.cur)return;const C=M.surf.geometry.attributes.color,A=spec3(R3.cur.k)||{},tr=trep(R3.cur.k,ph);
+function pulse3(ph){const M=R3.M;if(!M||!R3.rest||!R3.cur)return;const C=M.surf.geometry.attributes.color,A=spec3(R3.cur.k)||{},tr=isAlt(R3.cur.ex)?(()=>{const [a,b]=altPh(ph),x=trep(R3.cur.k,a),y=trep(R3.cur.k,b);return x&&y?(x.e>y.e?x:y):null})():trep(R3.cur.k,ph);
  const e=tr?tr.e:A.hold?.82+.1*Math.sin(ph*2*Math.PI):aphase(ph,A.hold),r=R3.red,hot=[Math.min(1.45,r.r*1.32),r.g*1.15,r.b*1.15],R=R3.rest;
  const paint=(list,lo,hi)=>{const t=lo+(hi-lo)*e;for(const i of list){const j=i*3;C.setXYZ(i,R[j]+(hot[0]-R[j])*t,R[j+1]+(hot[1]-R[j+1])*t,R[j+2]+(hot[2]-R[j+2])*t)}};
  paint(R3.main,.78,1);paint(R3.sec,.42,.6);C.needsUpdate=true}
@@ -1241,7 +1244,7 @@ XLIB.forEach(x=>{const same=LIB.find(e=>AMAP[e.id]==x.anim&&e.k==x.k)||LIB.find(
 ['dbr','kbr','kbp','srdl'].forEach(id=>{if(EX[id])EX[id].one=1});
 let ANI=null;
 function animSVG(id){return`<svg class="anim" viewBox="${(ANIMS[animKey(id)]||{}).vb||'0 0 160 120'}" role="img" aria-label="Animation of ${H(EX[id].n)}" id="animSvg">${aframe(id,.46,wtypeOf(id))}</svg>`}
-function animStart(id){animStop();const k=animKey(id);if(!k)return;const tp=tempoOf(k),dur=(tp?tp.dur:((spec3(k)||{}).dur||ANIMS[k].dur||2.8))*1000,t0=performance.now(),wt=wtypeOf(id);
+function animStart(id){animStop();const k=animKey(id);if(!k)return;const tp=tempoOf(k),dur=(tp?tp.dur:((spec3(k)||{}).dur||ANIMS[k].dur||2.8))*1000*(isAlt(EX[id])?2:1),t0=performance.now(),wt=wtypeOf(id);
  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const me={id,playing:!reduce,t0,dur,wt,pp:.46,mode:'2d'};ANI=me;
  const step=now=>{if(ANI!==me)return;const el=me.mode=='3d'?R3.c:document.getElementById('animSvg');if(!el||!el.isConnected){ANI=null;return}
   if(me.playing){const p=((now-me.t0)%me.dur)/me.dur;me.pp=p;if(me.mode=='3d'){try{draw3(p)}catch(e){me.mode='2d';const b=$('#gvBox');if(b)b.innerHTML=animSVG(id)}}else el.innerHTML=aframe(id,p,wt)}me.raf=requestAnimationFrame(step)};
@@ -1955,7 +1958,7 @@ async function landQR(){const el=$('#lqr');if(!el)return;try{await loadQR();el.i
 
 // ---------- one-time update for people who already had a profile (November 2026: research-based plans, extra goals) ----------
 // Shown once per profile, never in demo mode or before setup. The flag is saved the moment it shows, so it can't appear twice.
-const NEWS=2;let NEWSQ=0;
+const NEWS=2;let NEWSQ=0,TOURPL=null;
 function keepRamp(pl){pl.days.forEach(d=>d.items.forEach(it=>{const L=ST.lifts[it.ex];if(it.m&&EX[it.ex].r&&L&&L.pat&&L.pat.length>=2&&Math.min(...L.pat)<.85)it.st='ramp'}))}
 function newsCheck(){NEWSQ=0;if(!ST||DEMO||WIZ||ACT||VIEW=='workout'||!$('#sheet').hidden)return;
  if((ST.settings.news||0)<NEWS){ST.settings.news=NEWS;ST.settings.redo=1;tour(0);return}
@@ -1973,14 +1976,16 @@ function tour(st){ST.settings.newsStep=st;persist('core');let h='';const step=(n
   h=`<div>${step(1,'Goals')}<h2>Add another goal?</h2></div><p class="mut">Your main goal still shapes the plan. Extra goals adjust it, for example adding cardio for fat loss or heavier main lifts for strength.</p>
   <div class="list"><div class="li"><div><div class="sub">Main goal</div><div class="nm">${H((gs?.title||GT[ST.goal.type][0]).replace(': ',' to '))}</div></div></div>${A.map(a=>`<div class="li"><div><div class="sub">Also</div><div class="nm">${H((gStat(a)?.title||GT[a.type][0]).replace(': ',' to '))}</div></div></div>`).join('')}</div>
   <button class="btn pri full" onclick="tourGoal()">${A.length?'Change my goals':'Add a goal'}</button><button class="btn sec full" onclick="tour(2)">Keep my goals</button>`}
- if(st==2)h=`<div>${step(2,'Your plan')}<h2>Build a new plan?</h2></div><p class="mut">A new plan uses the updated rules and ${(ST.goal.also||[]).length?'all of your goals':'your goal'}. Lifts you do as a build-up stay that way.</p>
-  <p class="hint">Your current plan, "${H(ST.plan.name)}", is kept under Plan, then Plans, so you can switch back any time.</p>
-  <button class="btn pri full" onclick="tourBuild()">Build my new plan</button><button class="btn sec full" onclick="tour(3)">Keep my current plan</button>`;
+ if(st==2){const pv=buildPlan(ST.profile,ST.goal);keepRamp(pv);TOURPL=pv;
+  h=`<div>${step(2,'Your plan')}<h2>Your new plan</h2></div><p class="mut">Built with the updated rules for ${(ST.goal.also||[]).length?'all of your goals':'your goal'}. Have a look before you decide.</p>
+  ${pv.days.map(d=>`<div><div class="row sp" style="flex-wrap:nowrap;margin-top:6px"><h3>${H(d.n)}</h3><span class="hint">About ${dayMin(d)} min</span></div><div class="list" style="margin-top:6px">${d.items.map(it=>{const ex=EX[it.ex],L=ST.lifts[it.ex];return`<div class="li"><div style="min-width:0"><div class="nm">${ex.n}${it.m?'<i class="dotm"></i>':''}</div><div class="sub">${isRamp(it)?it.s+' sets building up':it.s+' sets'}, ${it.a}–${it.b} ${ex.t?'sec':'reps'}</div></div>${wkLbl(L?L.w:0,ex)}</div>`}).join('')}${d.cardio?`<div class="li"><div class="nm">${CARDIO[d.cardio.type][0]}</div><span class="big-w">${d.cardio.min}<small>min</small></span></div>`:''}</div></div>`).join('')}
+  <p class="hint">If you use it, your current plan, "${H(ST.plan.name)}", is kept under Plan, then Plans, so you can switch back any time.</p>
+  <button class="btn pri full" onclick="tourBuild()">Use this plan</button><button class="btn sec full" onclick="tour(3)">Keep my current plan</button>`}
  if(st==3)h=`<div><h2>All set</h2></div><p class="mut">${ST.settings.tourBuilt?'Your new plan is ready on the Plan tab.':'Your plan is unchanged.'} You can change your goals any time in Me, and switch plans in Plan, then Plans.</p>
   <button class="btn pri full" onclick="tourDone()">Done</button>`;
  openSheet(`<div class="stack">${h}</div>`);UI.lock=1}
 function tourGoal(){ST.settings.newsStep=2;persist('core');UI.lock=0;closeSheet();WIZ=newWiz(true);WIZ.step=STEPS.indexOf('goal');WIZ.only=1;render();scrollTo(0,0)}
-function tourBuild(){const old=clone(ST.plan),pl=buildPlan(ST.profile,ST.goal);keepRamp(pl);pl.id=ST.plan.id;pl.name=old.auto?'Built for you':old.name;old.id=uid();old.name=(old.name||'Plan')+' (before update)';
+function tourBuild(){const old=clone(ST.plan),pl=TOURPL||buildPlan(ST.profile,ST.goal);if(!TOURPL)keepRamp(pl);TOURPL=null;pl.id=ST.plan.id;pl.name=old.auto?'Built for you':old.name;old.id=uid();old.name=(old.name||'Plan')+' (before update)';
  ST.shelf.unshift(old);ST.plan=pl;ST.settings.tourBuilt=1;ensureLifts();persist('core');render();tour(3)}
 function tourDone(){const built=ST.settings.tourBuilt;delete ST.settings.newsStep;delete ST.settings.tourBuilt;persist('core');UI.lock=0;closeSheet();go(built?'plan':'today')}
 
