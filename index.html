@@ -1292,7 +1292,8 @@ const EQ=EQG.flatMap(g=>g[1]),MACH=EQG[1][1].map(e=>e[0]);
 const KBW={kg:[4,6,8,10,12,14,16,20,24,28,32,40],lb:[10,15,20,25,30,35,40,45,50,55,60,70]};
 const LIM=[['knee','Knees'],['back','Lower back'],['shoulder','Shoulders'],['wrist','Wrists']];
 const CARDIO={run:['Run',''],walk:['Walk',''],tread:['Treadmill','tread'],bike:['Bike','bike'],row:['Row','row'],cycle:['Cycle outdoors',''],xt:['Cross-trainer',''],stairs:['Stair climber','',1],swim:['Swim',''],hike:['Hike',''],hiit:['HIIT or circuit','',1],kbc:['Kettlebell circuit','kb',1],sport:['Sport','',1],other:['Other cardio','',1]};
-const GT={strength:['Get stronger','Hit a target max on a lift'],muscle:['Build muscle','Add size and body weight steadily'],fatloss:['Lose fat','Reach a target body weight'],endurance:['Build endurance','Cover a distance faster'],general:['Stay consistent','Train a set number of days every week']};
+const MAINGT=['strength','muscle','fatloss','endurance','general'];
+const GT={recomp:['Build muscle and lose fat','Add muscle while your waist comes down'],strength:['Get stronger','Hit a target max on a lift'],muscle:['Build muscle','Add size and body weight steadily'],fatloss:['Lose fat','Reach a target body weight'],endurance:['Build endurance','Cover a distance faster'],general:['Stay consistent','Train a set number of days every week']};
 const EXP={beg:['Beginner','Under a year of regular lifting'],int:['Intermediate','One to three years, comfortable with the main lifts'],adv:['Advanced','Three years or more, you know your maxes']};
 
 // ---------- plan templates ----------
@@ -1316,7 +1317,7 @@ const TPL={
  pl:{n:'Pull',s:[['vpull',0,1],['hpull',0],['hpull',1],['delt',1],['bi',0],['bi',1]]},
  lg:{n:'Legs',s:[['squat',0,1],['hinge',1],['lunge',0],['ham',0],['calf',0],['core',0]]}};
 // sets, rep min, rep max, rest seconds; c = cardio minutes per session
-const SCH={strength:{m:[5,3,5,180],a:[3,6,10,120],c:0},muscle:{m:[4,6,10,150],a:[3,10,15,75],c:0},fatloss:{m:[3,6,10,120],a:[3,10,12,75],c:12},endurance:{m:[3,4,6,150],a:[3,8,12,75],c:20},general:{m:[3,6,10,120],a:[3,10,12,60],c:8}};
+const SCH={recomp:{m:[4,6,10,150],a:[3,10,15,75],c:10},strength:{m:[5,3,5,180],a:[3,6,10,120],c:0},muscle:{m:[4,6,10,150],a:[3,10,15,75],c:0},fatloss:{m:[3,6,10,120],a:[3,10,12,75],c:12},endurance:{m:[3,4,6,150],a:[3,8,12,75],c:20},general:{m:[3,6,10,120],a:[3,10,12,60],c:8}};
 
 const hasEq=(p,eq)=>!eq||eq.split('|').some(g=>g.split('+').every(k=>p.equip.includes(k)));
 const eligible=(pat,p)=>LIB.filter(e=>e.p==pat&&hasEq(p,e.eq)&&!(e.nb&&p.equip.includes('bench'))&&!e.av.some(a=>p.limits.includes(a))&&!(p.blocked||[]).includes(e.id));
@@ -1328,7 +1329,9 @@ function splitKeys(p,g){const d=+p.days;
  if(d<=2)return['ta','tb'];
  if(d==3)return g.type=='strength'?['sa','sb','sc']:['fa','fb','fc'];
  if(d==4)return['ua','la','ub','lb'];if(d==5)return['ua','la','pu','pl','lg'];return['pu','pl','lg','pu','pl','lg']}
-function mkItem(ex,main,g,p){let [s,a,b,r]=(SCH[g.type]||SCH.general)[main?'m':'a'];
+function mkItem(ex,main,g,p){let [s,a,b,r]=(SCH[g.type]||SCH.general)[main?'m':'a'];const also=(g.also||[]).map(x=>x.type);
+ if(main&&also.includes('strength')&&g.type!='strength'){[s,a,b,r]=[Math.max(s,4),3,6,180]}
+ if(!main&&also.includes('muscle')&&!['muscle','recomp'].includes(g.type))s=Math.min(4,s+1);
  if(p.exp=='beg'&&main)s=Math.max(3,s-1);
  if(+p.mins<=45){if(s>3)s--;r=Math.max(main?90:60,Math.round(r*.85))}
  if(!ex.r){a=Math.max(a,8);b=Math.max(b,15)}
@@ -1336,13 +1339,13 @@ function mkItem(ex,main,g,p){let [s,a,b,r]=(SCH[g.type]||SCH.general)[main?'m':'
  const it={ex:ex.id,s,a,b,r,m:main?1:0};if(main&&ex.r)it.st='straight';return it}
 const itemMin=it=>it.s*(it.r+(EX[it.ex].t?it.b:40))/60+(it.m?3:0);
 const dayMin=d=>Math.round(d.items.reduce((a,it)=>a+itemMin(it),0)+(d.cardio?d.cardio.min:0)+5);
-const cardioPick=(p,g)=>(g.type=='endurance'&&g.cardio)?g.cardio:(['row','bike','tread'].find(k=>p.equip.includes(k))||'run');
-function buildPlan(p,g){const keys=splitKeys(p,g),sc=SCH[g.type]||SCH.general,ct=cardioPick(p,g);
+const cardioPick=(p,g)=>{const eg=g.type=='endurance'?g:(g.also||[]).find(a=>a.type=='endurance');return(eg&&eg.cardio)?eg.cardio:(['row','bike','tread'].find(k=>p.equip.includes(k))||'run')};
+function buildPlan(p,g){const keys=splitKeys(p,g),sc=SCH[g.type]||SCH.general,ct=cardioPick(p,g),also=(g.also||[]).map(x=>x.type),extraC=(also.includes('fatloss')?10:0)+(also.includes('endurance')?15:0);
  const days=keys.map((k,i)=>{const t=TPL[k],sh=(+p.days>=6&&i>=3)?1:0,used=new Set(),items=[];
   t.s.forEach(([pat,v,m])=>{const ex=pick(pat,v+sh,used,p);if(!ex)return;used.add(ex.id);items.push(mkItem(ex,!!m,g,p))});
-  let cm=sc.c;const tot=()=>items.reduce((a,it)=>a+itemMin(it),0)+cm+5;
+  let cm=Math.min(40,sc.c+extraC);const tot=()=>items.reduce((a,it)=>a+itemMin(it),0)+cm+5;
   while(tot()>+p.mins&&items.length>3){const j=items.map(x=>x.m).lastIndexOf(0);if(j<0)break;items.splice(j,1)}
-  if(tot()>+p.mins&&g.type=='general')cm=0;
+  if(tot()>+p.mins&&g.type=='general'&&!extraC)cm=0;
   if(tot()>+p.mins&&cm>8)cm=Math.max(8,Math.round(cm-(tot()-p.mins)));
   return{n:t.n+(keys.indexOf(k)<i?' (2)':''),items,cardio:cm?{type:ct,min:cm}:null}});
  return{id:uid(),name:'Built for you',auto:true,days,next:0,made:today()}}
@@ -1364,7 +1367,7 @@ function ensureLifts(){ST.plan.days.forEach(d=>d.items.forEach(it=>lift(it.ex)))
 function lastSets(id){for(let k=ST.workouts.length-1;k>=0;k--){const it=ST.workouts[k].items.find(x=>x.ex==id);if(it&&it.sets.length)return it.sets}return null}
 // Set styles: 'straight' = same weight every set; 'ramp' = build up to a top set (e.g. 60, 80, 80, 90).
 // Ramps follow the shape you actually lift: each session's weights and reps are saved as a pattern relative to your top set.
-const R0={strength:.6,muscle:.65,general:.65,fatloss:.7,endurance:.75};
+const R0={recomp:.65,strength:.6,muscle:.65,general:.65,fatloss:.7,endurance:.75};
 const isRamp=it=>!!EX[it.ex].r&&(it.st||(it.m?'ramp':'straight'))=='ramp';
 function targetFor(it){const ex=EX[it.ex],L=lift(it.ex),adj=L.adj||0,a=it.a+adj,b=it.b+adj,last=lastSets(it.ex),w=ex.k=='band'?0:L.w;let r=a;
  if(last){const at=last.filter(s=>Math.abs((+s.w||0)-L.w)<.01);if(at.length)r=Math.min(b,Math.max(a,Math.min(...at.map(s=>s.r))+1))}
@@ -1469,9 +1472,9 @@ const bodySeries=()=>[...ST.body.weights].sort((a,b)=>a.d.localeCompare(b.d)).ma
 function trendW(){const s=bodySeries();if(!s.length)return null;const last=s[s.length-1].x,win=s.filter(p=>p.x>=last-6*864e5);return win.reduce((a,p)=>a+p.y,0)/win.length}
 function cardioSeries(type,km){const out=[];ST.workouts.forEach(w=>(w.cardio||[]).forEach(c=>{if(c.type==type&&+c.km>0&&+c.min>0)out.push({x:new Date(w.at).getTime(),y:c.min*60*Math.pow(km/c.km,1.06)})}));return out}
 function weekCounts(){const c={};ST.workouts.forEach(w=>{const k=monday(w.d);c[k]=(c[k]||0)+1});return c}
-const weekTarget=()=>ST.goal.type=='general'?(+ST.goal.sessions||3):ST.plan.days.length>6?6:(+ST.profile.days||ST.plan.days.length);
+const weekTarget=()=>gOf('general')?(+gOf('general').sessions||3):ST.plan.days.length>6?6:(+ST.profile.days||ST.plan.days.length);
 function streak(){const t=weekTarget(),c=weekCounts();let n=0,w=monday(today());if((c[w]||0)>=t)n++;w=addD(w,-7);while((c[w]||0)>=t){n++;w=addD(w,-7)}return n}
-function gStat(){const g=ST.goal,t=today();if(!g||!g.type)return null;
+function gStat(gg){const g=gg||ST.goal,t=today();if(!g||!g.type)return null;
  const left=g.date?dBet(t,g.date):null,wl=left!=null?Math.max(left/7,.15):null,o={type:g.type,left,g};let ser=[];
  if(g.type=='strength'){const ex=EX[g.ex]||EX.bp,bw=!ex.r;ser=liftSeries(ex.id);
   o.cur=bw?(ST.prs[ex.id]?.mr||0):(ST.prs[ex.id]?.e1||0);o.target=+g.target;o.start=+g.start||0;
@@ -1484,6 +1487,8 @@ function gStat(){const g=ST.goal,t=today();if(!g||!g.type)return null;
   o.fmt=v=>mmss(v);o.rateU=' s';o.rf=v=>nf(v,0);
   o.title=`${CARDIO[g.cardio][0]} ${nf(+g.km,2)} km in ${mmss(g.time)}`;o.label='Predicted time';o.has=ser.length>0;
   const best=[];let b=Infinity;ser.forEach(p=>{if(p.y<b){b=p.y;best.push({x:p.x,y:p.y})}});ser=best}
+ else if(g.type=='recomp'){ser=ST.body.meas.filter(m=>+m.waist>0).map(m=>({x:dP(m.d).getTime(),y:+m.waist}));o.cur=ser.length?ser[ser.length-1].y:null;o.target=+g.target;o.start=+g.start||o.cur;
+  o.fmt=v=>nf(lenv(v),1)+' '+LU();o.rateU=' '+LU();o.rf=v=>nf(lenv(v),2);o.title='Waist down to '+o.fmt(o.target);o.label='Waist';o.has=ser.length>0}
  else{const c=weekCounts(),st=monday(g.startDate||t);let hit=0,weeks=0;for(let w=st;w<=monday(t);w=addD(w,7)){weeks++;if((c[w]||0)>=(+g.sessions||3))hit++}
   o.cur=hit;o.target=+g.weeks||8;o.start=0;o.fmt=v=>nf(v,0)+' wk';o.title=`${g.sessions} sessions a week for ${g.weeks} weeks`;o.label='Weeks hit';o.has=true;
   o.pct=clamp(hit/o.target,0,1);o.status=hit>=o.target?'done':(weeks-hit>1&&weeks>2?'behind':'on');o.line=`${hit} of ${weeks} week${weeks==1?'':'s'} hit so far`;return o}
@@ -1537,7 +1542,7 @@ const syncWarn=()=>!DEMO&&NOSYNC?`<section class="card" style="border-color:var(
  <p class="hint" style="margin-top:6px">To keep your data, ask the person who shared it for edit access, or for your own copy. Until then, export a backup after each session and restore it if your data disappears.</p>
  ${ST?`<button class="btn sec full" style="margin-top:12px" onclick="exportData()">Export backup now</button>`:`<button class="btn sec full" style="margin-top:12px" onclick="$('#impFile').click()">Restore a backup</button>`}</section>`:'';
 const demoBar=()=>DEMO?`<div class="demo"><span>You're looking at demo data. Nothing is saved.</span><button class="btn pri sm" onclick="exitDemo()">Set up mine</button></div>`:'';
-const numU=h=>h.replace(/(<b class="num[^"]*">)([^<]+?)\s(kg|lb|reps|s|min|wk|km)(<\/b>)/g,'$1$2<small>$3</small>$4');
+const numU=h=>h.replace(/(<b class="num[^"]*">)([^<]+?)\s(kg|lb|reps|s|min|wk|km|cm|in)(<\/b>)/g,'$1$2<small>$3</small>$4');
 function render(){applyTheme();const app=$('#app'),nav=$('#nav');
  if(landing()){app.innerHTML=landingHTML();nav.hidden=true;$('#timer').hidden=true;document.body.classList.add('lnd');requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off});landQR();return}document.body.classList.remove('lnd');
  if(!ST&&!WIZ)WIZ=newWiz(false);
@@ -1574,6 +1579,7 @@ function coach(gs,next){const st=streak(),c=weekCounts()[monday(today())]||0,tgt
  const wk=more?`<b>${more} more session${more>1?'s':''}</b> this week ${st?`keeps your ${st}-week streak going`:'starts a streak'}.`:`Weekly target hit. <b>${st}-week streak</b>.`;
  if(!ST.workouts.length)return`Your first session sets your baselines. Choose weights you could lift for two more reps than the target. ${wk}`;
  if(!gs)return wk;
+ if(gs.status=='nodata'&&gs.type=='recomp')return`Measure your waist in Progress, Body to start tracking it. ${wk}`;
  if(gs.status=='nodata')return(gs.type=='strength'?`Log ${EX[gs.g.ex]?.n||'your goal lift'} to start tracking your max.`:gs.type=='endurance'?`Log a ${CARDIO[gs.g.cardio][0].toLowerCase()} with a distance to start tracking your time.`:'Log your weight to start your trend line.')+' '+wk;
  if(gs.status=='early')return`Keep logging for a week or two and you'll see your pace towards the goal. ${wk}`;
  if(gs.status=='behind')return`You're <b>behind pace</b>. Beat every rep target today and don't skip the last set. ${wk}`;
@@ -1588,8 +1594,11 @@ function goalPlate(gs){const R=73,C=2*Math.PI*R,pct=gs.pct||0,off=C*(1-pct);let 
  <circle class="rim" cx="100" cy="100" r="99"/>${k}<text text-anchor="middle" style="font-size:${rimFs(rim)}px"><textPath href="#gpr" startOffset="50%">${H(rim)}</textPath></text>
  <circle class="tr" cx="100" cy="100" r="${R}"/><circle class="pl-p" cx="100" cy="100" r="${R}" stroke="url(#gpg)" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${off.toFixed(1)}" transform="rotate(180 100 100)"/>
  <circle class="hub" cx="100" cy="100" r="24"/><circle class="hole" cx="100" cy="100" r="10"/></svg>`}
-const bigU=t=>String(t).replace(/^(.+?)\s(kg|lb|reps|s|min|wk|km)$/,'$1<small>$2</small>');
+const bigU=t=>String(t).replace(/^(.+?)\s(kg|lb|reps|s|min|wk|km|cm|in)$/,'$1<small>$2</small>');
 function wkLbl(w,ex){if(ex.k=='band')return'<span class="big-w bw">Band</span>';if(!(w>0))return`<span class="big-w bw">${ex.r?'':'Bodyweight'}</span>`;return`<span class="big-w">${ex.r?'':'+'}${fw(w)}<small>${U()}</small></span>`}
+function miniRing(pct){const R=17,C=2*Math.PI*R;return`<svg viewBox="0 0 44 44" width="44" height="44" aria-hidden="true"><circle cx="22" cy="22" r="${R}" fill="none" stroke="var(--surf2)" stroke-width="6"/><circle cx="22" cy="22" r="${R}" fill="none" stroke="var(--red)" stroke-width="6" stroke-dasharray="${(C*pct).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 22 22)"/></svg>`}
+function alsoRows(){const A=ST.goal.also||[];if(!A.length)return'';return`<div class="list" style="margin:4px 0 6px">${A.map(a=>{const gs=gStat(a);if(!gs)return'';const sl=ST_LBL[gs.status]||ST_LBL.on;
+ return`<div class="li"><div class="row" style="flex-wrap:nowrap;gap:12px;min-width:0">${miniRing(gs.pct||0)}<div style="min-width:0"><div class="sub" style="color:var(--mut)">Also</div><div class="nm">${H(gs.title.replace(': ',' to '))}</div><span class="pill ${sl[1]}" style="font-size:12.5px">${sl[0]}</span></div></div><div class="big-w" style="font-size:26px">${gs.cur!=null&&gs.has?bigU(gs.fmt(gs.cur)):'–'}</div></div>`}).join('')}</div>`}
 function todayHTML(){const t=today(),gs=gStat(),days=ST.plan.days,ni=days.length?ST.plan.next%days.length:0,nd=days[ni];
  const c=weekCounts()[monday(t)]||0,st=streak(),tg0=weekTarget(),wkDone=new Set(ST.workouts.filter(w=>monday(w.d)==monday(t)).map(w=>(dP(w.d).getDay()+6)%7)),dow=(dP(t).getDay()+6)%7;
  let h=`<div class="top"><div><div class="eyebrow">${fD(t,{weekday:'long',day:'numeric',month:'long'})}</div><h1>${ST.profile.name?'Hi, '+H(ST.profile.name):'Today'}</h1></div></div><div class="stack">`;
@@ -1598,7 +1607,7 @@ function todayHTML(){const t=today(),gs=gStat(),days=ST.plan.days,ni=days.length
  if(gs){const sl=ST_LBL[gs.status]||ST_LBL.on,cur=gs.cur!=null&&gs.has?gs.fmt(gs.cur):'–',pc=Math.round((gs.pct||0)*100);
   h+=`<section class="card" style="padding-top:0"><div class="ghero">${goalPlate(gs)}<div class="gt"><div class="gw">${H(gs.title.replace(': ',' to '))}</div><div class="gbig num">${bigU(cur)}</div>
    <div class="gsub">${gs.label}${gs.has?` now. ${pc}% of the way`:''}${gs.left!=null&&gs.left>=0&&gs.status!='done'?`, ${gs.left} days left`:''}.</div><div class="gst"><span class="pill ${sl[1]}">${sl[0]}</span></div></div></div>
-   ${gs.line?`<p class="hint">${gs.line.replace(' · ','. Trending ').replace('trending ','')}</p>`:''}<div class="coach">${coach(gs,nd)}</div></section>`}
+   ${gs.line?`<p class="hint">${gs.line.replace(' · ','. Trending ').replace('trending ','')}</p>`:''}${alsoRows()}<div class="coach">${coach(gs,nd)}</div></section>`}
  h+=`<section class="card"><div class="hd"><h3>This week</h3></div><div class="wkb"><div class="shaft"></div><div class="days">${['M','T','W','T','F','S','S'].map((l,i)=>`<div class="d${i==dow?' t':''}"><div class="p${wkDone.has(i)?' on':i==dow?' now':' rest'}"></div>${l}</div>`).join('')}</div></div>
   <p class="hint"><b style="color:var(--fg)">${c} of ${tg0} done.</b> ${st?`${st}-week streak at your target.`:c>=tg0?'Target hit, and that starts a streak.':'Hit your weekly target to start a streak.'}</p></section>`;
  if(!nd)h+=`<section class="card"><h3>Your plan has no days</h3><p class="mut" style="margin-top:6px">Add a day with your exercises, or switch to another plan.</p><button class="btn pri full" style="margin-top:14px" onclick="go('plan')">Open plan</button><button class="btn ghost full" onclick="cardioSheet()">Log cardio only</button></section>`;
@@ -1746,7 +1755,7 @@ function liftBody(id,inSheet){const ex=EX[id],ser=liftSeries(id),pr=ST.prs[id]||
   ${ex.r?`<div class="kv"><span class="eyebrow">Heaviest</span><b class="num">${pr.w?fwu(pr.w):'–'}</b></div>`:''}
   <div class="kv"><span class="eyebrow">Since start</span><b class="num ${ch>0?'up':ch<0?'dn':''}">${pts.length>1?(ch>0?'+':ch<0?'−':'')+(ex.r?fw(Math.abs(ch)):nf(Math.abs(ch),0)):'–'}</b></div></div>
   ${ex.r&&ser.length>1?`<div class="seg" role="group" aria-label="Chart shows" style="margin-bottom:10px">${[['e1','Estimated max'],['top','Heaviest weight']].map(([k,l])=>`<button aria-pressed="${mode==k}" onclick="UI.lm='${k}';${re}">${l}</button>`).join('')}</div>`:''}
-  ${pts.length>1?chart([{pts,area:1,dots:1}],{fy,label:ex.n+' over time',target:mode=='e1'&&ST.goal.type=='strength'&&ST.goal.ex==id?+ST.goal.target:null}):'<p class="hint">Log it once more to see a trend.</p>'}
+  ${pts.length>1?chart([{pts,area:1,dots:1}],{fy,label:ex.n+' over time',target:mode=='e1'&&gOf('strength')&&gOf('strength').ex==id?+gOf('strength').target:null}):'<p class="hint">Log it once more to see a trend.</p>'}
   <p class="hint" style="margin-top:6px">${ex.r?(mode=='top'?'The heaviest weight you lifted each session.':'Estimated max uses the Epley formula on your best set each session.'):'Most reps or seconds in a single set each session.'}</p></section>
  <section class="card"><h3 style="margin-bottom:8px">Recent sessions</h3><div class="list">${hist.map(w=>{const it=w.items.find(i=>i.ex==id);return`<div class="li"><div class="sub" style="color:var(--fg);font-weight:600">${fD(w.d,{weekday:'short',day:'numeric',month:'short'})}${it.eff?`<span class="tag" style="color:var(--mut)">${EFF[it.eff][0]}</span>`:''}</div><div class="val" style="white-space:normal;font-weight:600">${it.sets.map(s=>(s.w>0?fw(s.w)+'×':'')+s.r).join(', ')}</div></div>`}).join('')}</div></section>`}
 function exHist(id){const ex=EX[id],any=ST.workouts.some(w=>w.items.some(i=>i.ex==id));
@@ -2064,8 +2073,8 @@ const learned=[];
  w.vol=Math.round(w.items.reduce((v,it)=>v+it.sets.reduce((x,s)=>x+s.w*s.r,0),0));
  const dl=DL(),msgs=dl?['Deload week: your weights stay the same next time.']:learned.concat(w.items.map(prog).filter(Boolean)),prs=prCheck(w);w.prs=prs.length;w.prx=[...new Set(prs.map(p=>p.ex))];if(dl)w.dl=1;
  ST.workouts.push(w);if(a.day!=null&&ST.plan.days[a.day])ST.plan.next=(a.day+1)%ST.plan.days.length;
- const g=ST.goal;if(g.type=='endurance'&&!g.start){const s=cardioSeries(g.cardio,+g.km);if(s.length)g.start=Math.min(...s.map(p=>p.y))}
- if(g.type=='strength'&&!g.start){const pr=ST.prs[g.ex];if(pr)g.start=EX[g.ex].r?pr.e1:pr.mr}
+ for(const g of allG()){if(g.type=='endurance'&&!g.start){const s=cardioSeries(g.cardio,+g.km);if(s.length)g.start=Math.min(...s.map(p=>p.y))}
+ if(g.type=='strength'&&!g.start){const pr=ST.prs[g.ex];if(pr)g.start=EX[g.ex].r?pr.e1:pr.mr}}
  const badges=checkBadges(d);return{w,msgs,prs,badges}}
 function summary(r){const w=r.w,sets=w.items.reduce((n,it)=>n+it.sets.length,0);
  openSheet(`<div class="stack"><div><div class="eyebrow">Workout saved</div><h2 style="font-size:34px">${H(w.n)} done</h2></div>
@@ -2227,7 +2236,7 @@ function meHTML(){const p=ST.profile,g=ST.goal,sx={m:'Male',f:'Female',x:''}[p.s
  <p class="hint" style="margin-top:4px">${p.equip.length?p.equip.map(k=>EQ.find(e=>e[0]==k)[1]).join(', '):'Bodyweight only'}${p.kbs&&p.kbs.length?' · Kettlebells: '+[...p.kbs].sort((a,b)=>a-b).map(fw).join(', ')+' '+U():''}${p.limits.length?' · Avoiding strain on '+p.limits.map(k=>LIM.find(e=>e[0]==k)[1].toLowerCase()).join(', '):''}</p></section>
  ${p.blocked.length?`<section class="card"><div class="hd"><h3>Ruled-out exercises</h3></div><p class="hint" style="margin-bottom:10px">These are never suggested. Tap one to allow it again.</p><div class="chips">${p.blocked.map(id=>`<button class="chip" onclick="unblockEx('${id}')">${EX[id].n} ✕</button>`).join('')}</div></section>`:''}
  <section class="card"><div class="hd"><h3>Goal</h3><button class="btn sec sm" onclick="WIZ=newWiz(true);WIZ.step=5;WIZ.only=1;render();scrollTo(0,0)">Change</button></div>
- <p>${H(gStat()?.title||'')}</p>${g.date?`<p class="hint" style="margin-top:4px">By ${fD(g.date,{day:'numeric',month:'long',year:'numeric'})}</p>`:''}</section>
+ <p>${H(gStat()?.title||'')}</p>${(g.also||[]).map(a=>`<p class="hint" style="margin-top:4px">Also: ${H(gStat(a)?.title||GT[a.type][0])}</p>`).join('')}${g.date?`<p class="hint" style="margin-top:4px">By ${fD(g.date,{day:'numeric',month:'long',year:'numeric'})}</p>`:''}</section>
  <section class="card stack"><h3>Settings</h3>
  <div class="row sp"><span style="font-weight:600">Units</span><div class="chips">${['kg','lb'].map(u=>`<button class="chip" aria-pressed="${U()==u}" onclick="setUnits('${u}')">${u}</button>`).join('')}</div></div>
  <div class="row sp"><span style="font-weight:600">Appearance</span><div class="chips">${[['auto','Auto'],['dark','Dark'],['light','Light']].map(([k,l])=>`<button class="chip" aria-pressed="${themeMode()==k}" onclick="setTheme('${k}')">${l}</button>`).join('')}</div></div>
@@ -2270,7 +2279,7 @@ async function resetAll(){const ids=ST?ST.workouts.map(w=>w.id):[];
 const STEPS=['start','you','train','kit','limits','goal','target','review'];
 function newWiz(edit){const p=edit&&ST?ST.profile:null,g=edit&&ST?ST.goal:null;
  return{step:0,edit:!!edit,only:0,err:'',d:{name:p?.name||'',units:p?.units||'kg',sex:p?.sex||'',age:p?.age||'',hCm:p?.heightCm||'',wKg:p?.weightKg||'',exp:p?.exp||'',days:p?.days||3,mins:p?.mins||60,
-  equip:p?[...p.equip]:['db','bench'],dbMax:p?.dbMax||'',plates:p&&p.plates?clone(p.plates):null,kbs:p?[...(p.kbs||[])]:[],blocked:p?[...(p.blocked||[])]:[],limits:p?[...p.limits]:[],goal:g?clone(g):{type:''}}}}
+  equip:p?[...p.equip]:['db','bench'],dbMax:p?.dbMax||'',plates:p&&p.plates?clone(p.plates):null,kbs:p?[...(p.kbs||[])]:[],blocked:p?[...(p.blocked||[])]:[],limits:p?[...p.limits]:[],goal:g?rawGoal(g):{type:'',also:[]}}}}
 const wd=()=>WIZ.d;
 function draftProfile(){const d=wd();return{name:d.name.trim(),units:d.units,sex:d.sex||'x',age:+d.age,heightCm:+d.hCm,weightKg:+d.wKg,exp:d.exp,days:+d.days,mins:+d.mins,equip:[...d.equip],dbMax:+d.dbMax||0,plates:d.equip.includes('bb')?clone(d.plates||defPlates(d.units)):null,kbs:[...d.kbs],blocked:[...d.blocked],limits:[...d.limits],eqV:2}}
 function wz(k,v,re){wd()[k]=v;WIZ.err='';if(re)render()}
@@ -2280,23 +2289,42 @@ function wzBlock(id){const a=wd().blocked,i=a.indexOf(id);i<0?a.push(id):a.splic
 function wzHeight(){const d=wd();if(U()=='lb'){const ft=+$('#hft').value||0,inch=+$('#hin').value||0;d.hCm=ft||inch?(ft*12+inch)*2.54:''}else d.hCm=+$('#hcm').value||''}
 const chipsH=(k,opts,multi)=>`<div class="chips">${opts.map(([v,l])=>`<button class="chip" aria-pressed="${multi?wd()[k].includes(v):wd()[k]==v}" onclick="${multi?`wzTog('${k}','${v}')`:`wz('${k}',${typeof v=='number'?v:`'${v}'`},1)`}">${l}</button>`).join('')}</div>`;
 function goalLifts(){const p=draftProfile();return LIB.filter(e=>['squat','hinge','hpush','vpush','hpull','vpull'].includes(e.p)&&hasEq(p,e.eq)&&!e.av.some(a=>p.limits.includes(a)))}
-function goalDefaults(){const g=wd().goal,p=draftProfile(),t=today();
+// a main goal plus up to two extras. Building muscle and losing fat together becomes one recomposition goal, tracked by waist size.
+const allG=()=>ST&&ST.goal?[ST.goal,...(ST.goal.also||[])]:[];
+const gOf=t=>allG().find(g=>g.type==t);
+const isRecomp=g=>!!g&&((g.type=='muscle'&&(g.also||[]).some(a=>a.type=='fatloss'))||(g.type=='fatloss'&&(g.also||[]).some(a=>a.type=='muscle')));
+const latestWaist=()=>{const m=ST?[...ST.body.meas].reverse().find(x=>+x.waist>0):null;return m?+m.waist:0};
+function finalGoal(raw){const g=clone(raw);g.also=(g.also||[]).filter(a=>a.type&&a.type!=g.type).slice(0,2);
+ if(isRecomp(g)){g.also=g.also.filter(a=>a.type!='muscle'&&a.type!='fatloss');Object.assign(g,{type:'recomp',target:+g.wt||0,waist:+g.waist||0});['ex','km','time','cardio','sessions','weeks'].forEach(k=>delete g[k])}
+ delete g.wt;return g}
+function rawGoal(g){const r=clone(g||{type:''});r.also=r.also||[];if(r.type=='recomp'){r.type='muscle';r.wt=r.target;r.target=0;r.also.unshift({type:'fatloss'})}return r}
+function setMain(k){const g=wd().goal,also=(g.also||[]).filter(a=>a.type!=k);wd().goal={type:k,also};goalDefaults();WIZ.err='';render()}
+function toggleAlso(k){const g=wd().goal;g.also=g.also||[];const i=g.also.findIndex(a=>a.type==k);if(i>=0)g.also.splice(i,1);else{if(g.also.length>=2){toast('Pick up to two extra goals.');return}const a={type:k};g.also.push(a);goalDefaults(a)}if(isRecomp(g))goalDefaults();WIZ.err='';render()}
+function goalStart(x,p){if(x.type=='strength'){const ex=EX[x.ex],pr=ST.prs[x.ex];let v=ex.r?(pr?.e1||0):(pr?.mr||0);if(!v&&ex.r)v=e1(lift(x.ex).w,5);return v}
+ if(x.type=='fatloss'||x.type=='muscle')return trendW()||p.weightKg;if(x.type=='endurance'){const q=cardioSeries(x.cardio,+x.km);return q.length?Math.min(...q.map(v=>v.y)):0}
+ if(x.type=='recomp')return latestWaist()||+x.waist||0;return 0}
+function goalDefaults(gg){const g=gg||wd().goal,p=draftProfile(),t=today();
  if(g.type=='strength'){const L=goalLifts();if(!g.ex||!L.find(e=>e.id==g.ex))g.ex=(L.find(e=>e.r)||L[0]||EX.pu).id;const ex=EX[g.ex];
   if(!g.target){if(ex.r){const c=(ST&&ST.prs[ex.id]?.e1)||e1(est(ex,p),5);g.target=roundW(c*1.15,ex.k)}else g.target=(ST&&ST.prs[ex.id]?.mr||8)+6}
   if(!g.date)g.date=addD(t,84)}
  if(g.type=='fatloss'||g.type=='muscle'){if(!g.target)g.target=g.type=='fatloss'?Math.round((p.weightKg-Math.max(3,p.weightKg*.06))*2)/2:Math.round((p.weightKg+3)*2)/2;if(!g.date)g.date=addD(t,g.type=='fatloss'?84:126)}
  if(g.type=='endurance'){if(!g.cardio||!(CARDIO[g.cardio][1]==''||p.equip.includes(CARDIO[g.cardio][1])))g.cardio='run';if(!g.km)g.km=g.cardio=='bike'?20:5;if(!g.time)g.time=g.cardio=='bike'?3000:g.cardio=='row'?1500:g.cardio=='walk'?3300:1800;if(!g.date)g.date=addD(t,70)}
- if(g.type=='general'){if(!g.sessions)g.sessions=+wd().days;if(!g.weeks)g.weeks=8}}
+ if(g.type=='general'){if(!g.sessions)g.sessions=+wd().days;if(!g.weeks)g.weeks=8}
+ if(!gg&&isRecomp(g)){if(!g.waist)g.waist=latestWaist()||'';if(!g.wt&&g.waist)g.wt=Math.round((g.waist-4)*2)/2;if(!g.date)g.date=addD(t,112)}}
+function goalErr(g,d){if(g.type!='general'&&(!g.date||g.date<=today()))return'Pick a date in the future';if(g.type=='strength'&&!(+g.target>0))return'Enter a target';if((g.type=='fatloss'||g.type=='muscle')&&!(+g.target>=30))return'Enter a target weight';if(g.type=='fatloss'&&+g.target>=+d.wKg)return'The target weight should be below your current weight';if(g.type=='muscle'&&+g.target<=+d.wKg)return'The target weight should be above your current weight';if(g.type=='endurance'&&!(+g.km>0&&+g.time>0))return'Enter a distance and a target time';return''}
 function wizValid(){const d=wd(),s=STEPS[WIZ.step],g=d.goal;
  if(s=='you'){if(!(+d.age>=13&&+d.age<=100))return'Enter an age between 13 and 100.';if(!(+d.hCm>=120&&+d.hCm<=230))return'Enter your height.';if(!(+d.wKg>=30&&+d.wKg<=300))return'Enter your body weight.'}
  if(s=='train'&&!d.exp)return'Pick your experience level.';
  if(s=='goal'&&!g.type)return'Pick a goal.';
  if(s=='target'){if(g.type!='general'&&(!g.date||g.date<=today()))return'Pick a date in the future.';
+  if(!isRecomp(g)){
   if(g.type=='strength'&&!(+g.target>0))return'Enter a target.';
   if((g.type=='fatloss'||g.type=='muscle')&&!(+g.target>=30))return'Enter a target weight.';
   if(g.type=='fatloss'&&+g.target>=+d.wKg)return'For fat loss, the target should be below your current weight.';
   if(g.type=='muscle'&&+g.target<=+d.wKg)return'For building muscle, the target should be above your current weight.';
   if(g.type=='endurance'&&!(+g.km>0&&+g.time>0))return'Enter a distance and a target time.'}
+  if(isRecomp(g)){if(!(+g.waist>40))return'Enter your waist measurement.';if(!(+g.wt>40&&+g.wt<+g.waist))return'Set a target waist below your current one.'}
+  for(const a of (g.also||[])){if(a.type==g.type||(isRecomp(g)&&(a.type=='muscle'||a.type=='fatloss')))continue;const n=GT[a.type][0].toLowerCase(),e=goalErr(a,d);if(e)return e+' ('+n+')'}}
  return''}
 function wzNext(){const e=wizValid();if(e){WIZ.err=e;render();return}
  if(STEPS[WIZ.step]=='goal')goalDefaults();
@@ -2325,10 +2353,11 @@ function wizHTML(){const s=STEPS[WIZ.step],d=wd(),n=STEPS.length;let h=`<div cla
   ${kbOn?`<div><div class="eyebrow" style="margin-bottom:8px">Kettlebells you own</div><div class="chips">${KBW[U()].map(v=>{const kg=fromU(v),on=d.kbs.some(x=>Math.abs(x-kg)<.3);return`<button class="chip" aria-pressed="${on}" onclick="wzKb(${v})">${v} ${U()}</button>`}).join('')}</div><p class="hint" style="margin-top:6px">Kettlebell exercises use these exact weights and step up to your next bell.</p></div>`:''}
   <p class="hint">If something in your plan still isn't possible, you can rule it out on the next screens or any time later.</p>`}
  if(s=='limits')h+=`<h2>Anything to go easy on?</h2><p class="mut">Exercises that load these areas are left out of your plan.</p>${chipsH('limits',LIM,1)}<p class="hint">This isn't medical advice. For pain or an injury, check with a physio first.</p>`;
- if(s=='goal')h+=`<h2>What's the goal?</h2><p class="mut">Everything in the app points at this. You can change it later.</p><div class="opts">${Object.entries(GT).map(([k,[a,b]])=>`<button class="opt" aria-pressed="${d.goal.type==k}" onclick="wd().goal={type:'${k}'};WIZ.err='';render()"><b>${a}</b><span>${b}</span></button>`).join('')}</div>`;
+ if(s=='goal')h+=`<h2>What's the goal?</h2><p class="mut">Everything in the app points at this. You can change it later.</p><div class="opts">${MAINGT.map(k=>[k,GT[k]]).map(([k,[a,b]])=>`<button class="opt" aria-pressed="${d.goal.type==k}" onclick="setMain('${k}')"><b>${a}</b><span>${b}</span></button>`).join('')}</div>${d.goal.type?`<div style="margin-top:6px"><div class="eyebrow" style="margin-bottom:8px">Also working towards (optional, up to two)</div><div class="chips">${MAINGT.filter(k=>k!=d.goal.type).map(k=>`<button class="chip" aria-pressed="${!!(d.goal.also||[]).find(a=>a.type==k)}" onclick="toggleAlso('${k}')">${GT[k][0]}</button>`).join('')}</div>
+ ${isRecomp(d.goal)?`<p class="hint" style="margin-top:10px">Building muscle and losing fat together is called recomposition. Your weight may barely move, so the app tracks your waist and your strength instead of the scale.</p>`:`<p class="hint" style="margin-top:10px">Your main goal shapes the plan. Extras adjust it, for example adding cardio for fat loss or heavier main lifts for strength.</p>`}</div>`:''}`;
  if(s=='target')h+=targetStep();
- if(s=='review'){const p=draftProfile(),pl=buildPlan(p,d.goal);
-  h+=`<h2>Your plan is ready</h2><p class="mut">${pl.days.length} sessions a week built for ${GT[d.goal.type][0].toLowerCase()}. You can swap any exercise later.</p>
+ if(s=='review'){const p=draftProfile(),pl=buildPlan(p,finalGoal(d.goal));
+  h+=`<h2>Your plan is ready</h2><p class="mut">${pl.days.length} sessions a week, built to ${GT[finalGoal(d.goal).type][0].toLowerCase()}${(finalGoal(d.goal).also||[]).length?', plus '+finalGoal(d.goal).also.map(a=>GT[a.type][0].toLowerCase()).join(' and '):''}. You can swap any exercise later.</p>
   <p class="hint">Can't do one of these with your setup? Tap the cross and it's replaced with something you can do.</p>
   ${pl.days.map(dy=>`<section class="card"><div class="eyebrow">About ${dayMin(dy)} min</div><h3>${H(dy.n)}</h3><div class="list" style="margin-top:8px">${dy.items.map(it=>`<div class="li"><div class="nmr">${thumb(it.ex)}<div class="nm">${EX[it.ex].n}</div></div><div class="row" style="flex-wrap:nowrap;gap:4px"><span class="val">${it.s} × ${it.a}–${it.b}${EX[it.ex].t?'s':''}</span><button class="ib" aria-label="I can't do ${EX[it.ex].n}" onclick="wzBlock('${it.ex}')">${IC.x}</button></div></div>`).join('')}${dy.cardio?`<div class="li"><div class="nm">${CARDIO[dy.cardio.type][0]}</div><div class="val">${dy.cardio.min} min</div></div>`:''}</div></section>`).join('')}
   ${d.blocked.length?`<div><div class="eyebrow" style="margin-bottom:8px">Ruled out · tap to bring back</div><div class="chips">${d.blocked.map(id=>`<button class="chip" onclick="wzBlock('${id}')">${EX[id].n} ✕</button>`).join('')}</div></div>`:''}`}
@@ -2337,35 +2366,38 @@ function wizHTML(){const s=STEPS[WIZ.step],d=wd(),n=STEPS.length;let h=`<div cla
   <button class="btn pri" onclick="${s=='review'?'finishWiz()':'wzNext()'}">${s=='review'?(WIZ.edit?'Save changes':'Build my plan'):s=='start'?'Get started':WIZ.only&&s=='target'?'Save goal':'Next'}</button></div>`;
  if(s=='start'&&!WIZ.edit)h+=`<div class="row" style="justify-content:center;gap:18px;padding-bottom:12px"><button class="link" onclick="$('#impFile').click()">Restore a backup</button><button class="link" onclick="startDemo()">Look around with demo data</button></div>`;
  return h+'</div>'}
-function targetStep(){const g=wd().goal,p=draftProfile();let h=`<h2>${GT[g.type][0]}</h2>`;
- const date=`<label class="f">Target date<input type="date" min="${addD(today(),7)}" value="${g.date||''}" onchange="wd().goal.date=this.value;WIZ.err='';render()"></label>`;
+function goalFields(g,R,main){const p=draftProfile();let h='';const date=`<label class="f">Target date<input type="date" min="${addD(today(),7)}" value="${g.date||''}" onchange="${R}.date=this.value;WIZ.err='';render()"></label>`;
+ if(main&&isRecomp(g)){return`<div class="grid2"><label class="f">Waist now (${LU()})<input type="number" inputmode="decimal" step="any" value="${g.waist?lenv(g.waist):''}" placeholder="e.g. 90" onchange="${R}.waist=lenFrom(+this.value)||'';WIZ.err='';render()"></label><label class="f">Target waist (${LU()})<input type="number" inputmode="decimal" step="any" value="${g.wt?lenv(g.wt):''}" onchange="${R}.wt=lenFrom(+this.value)||'';WIZ.err=''"></label></div>${date}
+  <p class="hint">Measure around your navel, relaxed, first thing in the morning. A drop of 1–2 cm a month with steady or rising strength is good progress.</p>`}
  if(g.type=='strength'){const L=goalLifts(),ex=EX[g.ex],cur=(ST&&ST.prs[ex.id]?.e1)||e1(est(ex,p),5);
-  h+=`<label class="f">Lift<select onchange="const g=wd().goal;g.ex=this.value;g.target=0;goalDefaults();render()">${L.map(e=>`<option value="${e.id}"${e.id==g.ex?' selected':''}>${e.n}</option>`).join('')}</select></label>
-  ${ex.r?`<label class="f">Target one-rep max (${U()})<input type="number" inputmode="decimal" step="any" value="${wv(g.target)}" onchange="wd().goal.target=fromU(+this.value);WIZ.err=''"></label><p class="hint">Your estimated max today is around ${fwu(cur)}. Most lifters can add 5–15% in three months.</p>`
-  :`<label class="f">Target reps in one set<input type="number" inputmode="numeric" value="${g.target}" onchange="wd().goal.target=+this.value;WIZ.err=''"></label>`}${date}`}
+  h+=`<label class="f">Lift<select onchange="const g=${R};g.ex=this.value;g.target=0;goalDefaults(${main?'':R});render()">${L.map(e=>`<option value="${e.id}"${e.id==g.ex?' selected':''}>${e.n}</option>`).join('')}</select></label>
+  ${ex.r?`<label class="f">Target one-rep max (${U()})<input type="number" inputmode="decimal" step="any" value="${wv(g.target)}" onchange="${R}.target=fromU(+this.value);WIZ.err=''"></label><p class="hint">Your estimated max today is around ${fwu(cur)}. Most lifters can add 5–15% in three months.</p>`
+  :`<label class="f">Target reps in one set<input type="number" inputmode="numeric" value="${g.target}" onchange="${R}.target=+this.value;WIZ.err=''"></label>`}${date}`}
  if(g.type=='fatloss'||g.type=='muscle'){const wks=g.date?Math.max(1,dBet(today(),g.date)/7):12,rate=(g.target-p.weightKg)/wks,pc=Math.abs(rate)/p.weightKg*100,fast=g.type=='fatloss'?pc>1:pc>.5;
-  h+=`<label class="f">Target body weight (${U()})<input type="number" inputmode="decimal" step="any" value="${bwv(g.target)}" onchange="wd().goal.target=fromU(+this.value);WIZ.err='';render()"></label>${date}
+  h+=`<label class="f">Target body weight (${U()})<input type="number" inputmode="decimal" step="any" value="${bwv(g.target)}" onchange="${R}.target=fromU(+this.value);WIZ.err='';render()"></label>${date}
   <p class="${fast?'warn':'hint'}">That's ${nf(Math.abs(toU(rate)),2)} ${U()} a week (${nf(pc,1)}% of body weight). ${fast?(g.type=='fatloss'?'Faster than 1% a week risks losing muscle. Try a later date.':'Faster than 0.5% a week tends to add more fat than muscle. Try a later date.'):'A sensible pace.'}</p>`}
- if(g.type=='endurance'){h+=`<label class="f">Activity<select onchange="wd().goal.cardio=this.value;render()">${Object.entries(CARDIO).filter(([k,v])=>!v[2]&&(!v[1]||p.equip.includes(v[1]))).map(([k,v])=>`<option value="${k}"${k==g.cardio?' selected':''}>${v[0]}</option>`).join('')}</select></label>
-  <div class="grid2"><label class="f">Distance (km)<input type="number" inputmode="decimal" step="any" value="${g.km}" onchange="wd().goal.km=+this.value;WIZ.err=''"></label><label class="f">Target time (mm:ss)<input inputmode="numeric" value="${mmss(g.time)}" onchange="wd().goal.time=parseT(this.value)||0;WIZ.err=''"></label></div>${date}
+ if(g.type=='endurance'){h+=`<label class="f">Activity<select onchange="${R}.cardio=this.value;render()">${Object.entries(CARDIO).filter(([k,v])=>!v[2]&&(!v[1]||p.equip.includes(v[1]))).map(([k,v])=>`<option value="${k}"${k==g.cardio?' selected':''}>${v[0]}</option>`).join('')}</select></label>
+  <div class="grid2"><label class="f">Distance (km)<input type="number" inputmode="decimal" step="any" value="${g.km}" onchange="${R}.km=+this.value;WIZ.err=''"></label><label class="f">Target time (mm:ss)<input inputmode="numeric" value="${mmss(g.time)}" onchange="${R}.time=parseT(this.value)||0;WIZ.err=''"></label></div>${date}
   <p class="hint">Log your sessions with distance and time. The app predicts your time over the goal distance from every effort.</p>`}
- if(g.type=='general')h+=`<div><div class="eyebrow" style="margin-bottom:8px">Sessions every week</div><div class="chips">${[2,3,4,5,6].map(x=>`<button class="chip" aria-pressed="${g.sessions==x}" onclick="wd().goal.sessions=${x};render()">${x}</button>`).join('')}</div></div>
-  <div><div class="eyebrow" style="margin-bottom:8px">For how long</div><div class="chips">${[4,8,12,16,26].map(x=>`<button class="chip" aria-pressed="${g.weeks==x}" onclick="wd().goal.weeks=${x};render()">${x} weeks</button>`).join('')}</div></div>`;
+ if(g.type=='general')h+=`<div><div class="eyebrow" style="margin-bottom:8px">Sessions every week</div><div class="chips">${[2,3,4,5,6].map(x=>`<button class="chip" aria-pressed="${g.sessions==x}" onclick="${R}.sessions=${x};render()">${x}</button>`).join('')}</div></div>
+  <div><div class="eyebrow" style="margin-bottom:8px">For how long</div><div class="chips">${[4,8,12,16,26].map(x=>`<button class="chip" aria-pressed="${g.weeks==x}" onclick="${R}.weeks=${x};render()">${x} weeks</button>`).join('')}</div></div>`;
+ return h}
+function targetStep(){const g=wd().goal,rc=isRecomp(g),ex=(g.also||[]).map((a,i)=>[a,i]).filter(([a])=>a.type!=g.type&&!(rc&&(a.type=='muscle'||a.type=='fatloss')));
+ let h=`<h2>${rc?GT.recomp[0]:GT[g.type][0]}</h2>${goalFields(g,'wd().goal',1)}`;
+ ex.forEach(([a,i])=>{h+=`<div style="margin-top:12px;padding-top:18px;border-top:1px solid var(--line)"><div class="eyebrow">Also working towards</div><h3 style="margin:4px 0 12px">${GT[a.type][0]}</h3><div class="stack tight">${goalFields(a,`wd().goal.also[${i}]`,0)}</div></div>`});
  return h}
 function finishWiz(){const e=wizValid();if(e){WIZ.err=e;render();return}
- const p=draftProfile(),g=clone(wd().goal),t=today();
- const sameGoal=ST&&ST.goal&&['type','ex','target','date','cardio','km','time','sessions','weeks'].every(k=>ST.goal[k]==g[k]);
+ const p=draftProfile(),g=finalGoal(wd().goal),t=today(),prevG=allG().map(clone);
+ const sameGoal=ST&&ST.goal&&['type','ex','target','date','cardio','km','time','sessions','weeks','waist'].every(k=>ST.goal[k]==g[k]);
  if(!ST){ST=norm({v:1,profile:p,goal:g,settings:{theme:themeMode()},plan:buildPlan(p,g),body:{weights:[{d:t,kg:p.weightKg}],meas:[]},workouts:[]})}
- else{const old=ST.profile,planKeys=['days','mins','exp'].some(k=>old[k]!=p[k])||old.equip.join()!=p.equip.join()||old.limits.join()!=p.limits.join()||(old.blocked||[]).join()!=p.blocked.join()||(old.kbs||[]).join()!=p.kbs.join()||ST.goal.type!=g.type;
+ else{const old=ST.profile,planKeys=['days','mins','exp'].some(k=>old[k]!=p[k])||old.equip.join()!=p.equip.join()||old.limits.join()!=p.limits.join()||(old.blocked||[]).join()!=p.blocked.join()||(old.kbs||[]).join()!=p.kbs.join()||ST.goal.type!=g.type||(ST.goal.also||[]).map(a=>a.type).join()!=g.also.map(a=>a.type).join();
   if(Math.abs(old.weightKg-p.weightKg)>.05){ST.body.weights=ST.body.weights.filter(e=>e.d!=t);ST.body.weights.push({d:t,kg:p.weightKg})}
   ST.profile=p;if(sameGoal)Object.assign(g,{start:ST.goal.start,startDate:ST.goal.startDate});ST.goal=g;if(planKeys&&ST.plan.auto)ST.plan=Object.assign(buildPlan(p,g),{id:ST.plan.id,name:ST.plan.name})}
- if(!sameGoal){g.startDate=t;
-  if(g.type=='strength'){const ex=EX[g.ex],pr=ST.prs[g.ex];g.start=ex.r?(pr?.e1||0):(pr?.mr||0)}
-  if(g.type=='fatloss'||g.type=='muscle')g.start=trendW()||p.weightKg;
-  if(g.type=='endurance'){const s=cardioSeries(g.cardio,+g.km);g.start=s.length?Math.min(...s.map(x=>x.y)):0}
-  delete ST.badges.goal}
+ if(!sameGoal)delete ST.badges.goal;
+ if(g.type=='recomp'&&+g.waist>0&&Math.abs(latestWaist()-g.waist)>.05){const m=ST.body.meas.find(x=>x.d==t);if(m)m.waist=g.waist;else{ST.body.meas.push({d:t,waist:g.waist});ST.body.meas.sort((a,b)=>a.d.localeCompare(b.d))}}
  ensureLifts();
- if(g.type=='strength'&&!g.start&&EX[g.ex].r)g.start=e1(lift(g.ex).w,5);
+ [g,...g.also].forEach(x=>{const o=prevG.find(q=>q.type==x.type),same=o&&['ex','target','date','cardio','km','time','sessions','weeks','waist'].every(k=>o[k]==x[k]);
+  if(same&&o.startDate){x.start=o.start;x.startDate=o.startDate}else{x.startDate=t;x.start=goalStart(x,p)}});
  const wasEdit=WIZ.edit;WIZ=null;VIEW=wasEdit?'me':'today';persist('core','body');render();scrollTo(0,0);toast(wasEdit?'Saved':'Plan built. Your first session is ready.');if(!wasEdit)setTimeout(pendPlan,700)}
 
 // ---------- DEMO ----------
