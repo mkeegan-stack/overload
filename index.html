@@ -388,7 +388,8 @@ div.opt::after{display:none}div.opt{padding-right:0}
 #sheet .pan::before{content:"";display:block;width:40px;height:5px;border-radius:3px;background:var(--line2);margin:0 auto 14px}
 #sheet .pan h2{font-size:34px}
 /* toast */
-#toast{border-radius:999px;padding:11px 18px}
+#toast{border-radius:16px;padding:12px 16px 12px 14px;width:max-content;max-width:min(420px,calc(100% - 40px));display:flex;gap:10px;align-items:flex-start;text-align:left;line-height:1.35;font-weight:600;background:var(--surf);color:var(--fg);border:1px solid var(--line);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+#toast::before{content:"";flex:none;width:8px;height:8px;margin-top:6px;border-radius:50%;background:var(--red)}
 /* charts */
 .ch .a1{opacity:.18}.ch .g{stroke:var(--line)}
 /* badges: plates */
@@ -2057,7 +2058,7 @@ function blockEx(id,wi){const p=ST.profile;if(!p.blocked.includes(id))p.blocked.
  if(wi!=null&&ACT&&ACT.items[wi]){const it=ACT.items[wi],alt=altFor(id,ACT.items.map(x=>x.ex));
   if(alt){it.ex=alt.id;fitItem(it,alt);const t=dlAdjust(it,targetFor(it));it.t=t;it.wu=warmFor(it,t);it.sets=t.sets.map((x,j)=>it.sets[j]&&it.sets[j].done?it.sets[j]:{w:x.w,r:x.r,done:0});rep=alt}else ACT.items.splice(wi,1);
   ACT.items.forEach(x=>{if(x.pi!=null&&ST.plan.days[ACT.day]&&!ST.plan.days[ACT.day].items[x.pi])x.pi=null});saveAct()}
- persist('core');closeSheet();render();toast(rep?`${n} ruled out. Replaced with ${rep.n}.`:`${n} ruled out and removed.`)}
+ persist('core');closeSheet();render();toast(rep?`Swapped for ${rep.n}`:`Removed ${n}`)}
 function unblockEx(id){const b=ST.profile.blocked;b.splice(b.indexOf(id),1);persist('core');render();toast(EX[id].n+' can be suggested again. Rebuild your plan to use it.')}
 function mvItem(i,d){const a=ACT.items;[i,i+d,Math.min(i,i+d)-1].forEach(k=>{if(a[k])a[k].ss=0});[a[i],a[i+d]]=[a[i+d],a[i]];saveAct();closeSheet();render()}
 function swapSheet(mode,i,di,all,q){const cur=mode=='w'?ACT.items[i].ex:ST.plan.days[di].items[i].ex,pat=EX[cur].p,L=eligible(pat,ST.profile).filter(e=>e.id!=cur);
