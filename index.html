@@ -496,7 +496,8 @@ div.opt::after{display:none}div.opt{padding-right:0}
 .pli.ssm::before{top:-1px;bottom:-1px;border-top:0;border-bottom:0}
 .pli.ssl::before{top:-1px;bottom:50%;border-top:0;border-radius:0 0 0 9px}
 .addx{display:flex;align-items:center;gap:10px;color:var(--mut);font-weight:700;font-size:14px;padding-top:14px}
-.addx i{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line2);display:grid;place-items:center;font:700 16px/1 var(--fb);font-style:normal}
+.addx i{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line2);position:relative;flex:none}
+.addx i::before,.addx i::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.75px;border-radius:1px;background:currentColor;transform:translate(-50%,-50%)}.addx i::after{transform:translate(-50%,-50%) rotate(90deg)}
 .dash{border:1.5px dashed var(--line2)!important;background:none!important}
 /* ---- History ---- */
 .cal .mh{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -2152,7 +2153,7 @@ function planHTML(){const days=ST.plan.days,ni=days.length?ST.plan.next%days.len
   else{h+='<div class="plist">';d.items.forEach((it,i)=>{const ex=EX[it.ex],L=ST.lifts[it.ex],g=G[i],sc=g?(g.n==1?' ssf':g.n==g.of?' ssl':' ssm'):'';
     h+=`<button class="pli${sc}" onclick="itemSheet(${di},${i})"><span class="th" aria-hidden="true">${figSVG(it.ex)}</span><div style="min-width:0"><div class="n">${ex.n}${it.m?'<i class="dotm" title="Main lift"></i>':''}</div><div class="s">${isRamp(it)?(L&&L.pat?L.pat.length:it.s)+' sets building up':it.s+' sets'}, ${it.a}–${it.b} ${ex.t?'sec':'reps'}, rest ${mmss(it.r)}${g?`<span class="tag" style="color:var(--blue)">Superset ${g.lt}${g.n}</span>`:''}</div></div>${wkLbl(L?L.w:0,ex)}</button>`});
    if(d.cardio)h+=`<div class="pli"><span></span><div class="n">${CARDIO[d.cardio.type][0]}</div><span class="big-w">${d.cardio.min}<small>min</small></span></div>`;h+='</div>'}
-  h+=`<button class="addx" onclick="addExSheet('${di}')"><i>+</i>Add exercise</button></section>`});
+  h+=`<button class="addx" onclick="addExSheet('${di}')"><i aria-hidden="true"></i>Add exercise</button></section>`});
  if(days.some(d=>d.items.length)&&!days.some(d=>d.items.some(it=>musc(it.ex).p.includes('lats'))))h+=`<section class="card"><h3>No lat work in this plan</h3><p class="hint" style="margin-top:8px">Nothing here trains your lats, the big muscles down the sides of your back${days.some(d=>d.items.some(it=>musc(it.ex).p.includes('biceps')))?'':', or your biceps'}. Your equipment doesn't allow pull-ups or pulldowns. A doorway pull-up bar or a set of resistance bands would cover it: add it under Me, then rebuild the plan.</p></section>`;
  h+=`<button class="btn full dash" style="margin:20px 0" onclick="addDay()">Add a day</button>
  <section class="card"><h3>How the plan pushes you</h3><p class="hint" style="margin-top:8px">Each exercise has a rep range. When you hit the top of the range on every set (or on your top set, for build-up lifts), the weight goes up next time. Build-up lifts copy the pattern you actually lift, so if you go 60, 80, 80, 90 the next session ramps the same way to the new top weight. Miss the bottom of the range twice in a row and it drops 10% so you can build back. Bodyweight moves raise the rep range instead. If you tell it how the last set felt, an easy set earns a bigger jump and a hard one holds the weight for one more session.</p>
