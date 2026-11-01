@@ -573,7 +573,7 @@ body.lnd{padding-bottom:calc(30px + env(safe-area-inset-bottom,0px))}
 <div id="timer" hidden><div class="in"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="tr" cx="32" cy="32" r="27"/><circle class="tp" id="tring" cx="32" cy="32" r="27" stroke-dasharray="169.6" stroke-dashoffset="0" transform="rotate(-90 32 32)"/><circle cx="32" cy="32" r="8" style="fill:var(--surf2)"/></svg>
  <div style="min-width:0"><b id="tleft">0:00</b><div class="mut" id="tlbl">Rest</div></div>
  <div class="tb"><button class="btn sm" onclick="restAdj(-15)" aria-label="15 seconds less">−15</button><button class="btn sm" onclick="restAdj(15)" aria-label="15 seconds more">+15</button><button class="btn sm" onclick="restSkip()">Skip</button></div><i id="tfill" hidden></i></div></div>
-<div id="sheet" hidden onclick="if(event.target===this)closeSheet()"><div class="pan" id="pan" role="dialog" aria-modal="true"></div></div>
+<div id="sheet" hidden onclick="if(event.target===this&&!UI.lock)closeSheet()"><div class="pan" id="pan" role="dialog" aria-modal="true"></div></div>
 <div id="toast" role="status" hidden></div>
 <input type="file" id="impFile" accept="application/json,.json" hidden>
 
@@ -1532,7 +1532,7 @@ function setTheme(m){if(ST){ST.settings.theme=m;persist('core')}try{localStorage
 
 // ---------- UI plumbing ----------
 let toastT;function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,3200)}
-function openSheet(h){animStop();$('#pan').innerHTML=numU(h);$('#sheet').hidden=false}
+function openSheet(h){animStop();UI.lock=0;$('#pan').innerHTML=numU(h);$('#sheet').hidden=false}
 function closeSheet(){animStop();$('#sheet').hidden=true;$('#pan').innerHTML=''}
 function go(v){VIEW=v;UI.conf=null;render();window.scrollTo(0,0)}
 function navHTML(){const it=[['today','Today'],['plan','Plan'],['log','History'],['progress','Progress'],['me','Me']];
@@ -1553,7 +1553,7 @@ function render(){applyTheme();const app=$('#app'),nav=$('#nav');
  nav.hidden=false;$('#navIn').innerHTML=navHTML();$('#timer').hidden=true;
  app.innerHTML=numU(demoBar()+(VIEW=='today'||VIEW=='me'?syncWarn():'')+(VIEW=='today'?installCard():'')+({today:todayHTML,plan:planHTML,log:logHTML,progress:progHTML,me:meHTML}[VIEW]||todayHTML)());
  if(VIEW=='progress'&&UI.ptab=='body')photoRender();else photoClear();
- if(ST&&!DEMO&&(ST.settings.news||0)<NEWS&&!NEWSQ){NEWSQ=1;setTimeout(newsCheck,isSA()?2300:600)}
+ if(ST&&!DEMO&&((ST.settings.news||0)<NEWS||ST.settings.newsStep!=null)&&!NEWSQ){NEWSQ=1;setTimeout(newsCheck,isSA()?2300:600)}
  requestAnimationFrame(()=>{const p=document.querySelector('.pl-p[data-off]');if(p)p.style.strokeDashoffset=p.dataset.off})}
 
 // ---------- charts ----------
@@ -1914,7 +1914,7 @@ async function appQR(){try{await loadQR()}catch(e){toast("Couldn't load the QR c
  openSheet(`<div class="stack"><div><div class="eyebrow">Share Overload</div><h2>Scan to get the app</h2></div>${qrSVG(APPURL())}<p class="mut" style="text-align:center">Point their phone's camera at this. Overload opens with the steps to add it to their Home Screen.</p><button class="btn pri full" onclick="shareApp()">Send a link instead</button><button class="btn ghost full" onclick="closeSheet()">Close</button></div>`)}
 // ---------- Android back button: close sheets and step back instead of quitting ----------
 function backGuard(){if(!isSA()||isIOS())return;try{history.pushState({g:1},'')}catch(e){return}
- addEventListener('popstate',()=>{let done=true;if(!$('#sheet').hidden)closeSheet();else if(WIZ&&WIZ.step>0)wzBack();else if(VIEW!='today'&&VIEW!='workout')go('today');else done=false;
+ addEventListener('popstate',()=>{let done=true;if(!$('#sheet').hidden){if(!UI.lock)closeSheet()}else if(WIZ&&WIZ.step>0)wzBack();else if(VIEW!='today'&&VIEW!='workout')go('today');else done=false;
   if(done)try{history.pushState({g:1},'')}catch(e){}})}
 
 // ---------- opened in a browser: a page that shows how to add it to the Home Screen ----------
@@ -1957,17 +1957,30 @@ async function landQR(){const el=$('#lqr');if(!el)return;try{await loadQR();el.i
 // Shown once per profile, never in demo mode or before setup. The flag is saved the moment it shows, so it can't appear twice.
 const NEWS=2;let NEWSQ=0;
 function keepRamp(pl){pl.days.forEach(d=>d.items.forEach(it=>{const L=ST.lifts[it.ex];if(it.m&&EX[it.ex].r&&L&&L.pat&&L.pat.length>=2&&Math.min(...L.pat)<.85)it.st='ramp'}))}
-function newsCheck(){NEWSQ=0;if(!ST||DEMO||WIZ||ACT||VIEW=='workout'||(ST.settings.news||0)>=NEWS||!$('#sheet').hidden)return;
- ST.settings.news=NEWS;const old=clone(ST.plan),pl=buildPlan(ST.profile,ST.goal);keepRamp(pl);
- pl.id=ST.plan.id;pl.name=old.auto?'Built for you':old.name;old.id=uid();old.name=(old.name||'Plan')+' (before update)';ST.shelf.unshift(old);ST.plan=pl;ensureLifts();persist('core');render();
- openSheet(`<div class="stack"><div><div class="eyebrow">Overload update</div><h2>Your plan has been rebuilt</h2></div>
- <p>Two things are new:</p>
- <div class="list"><div class="li"><div><div class="nm">Plans follow the research more closely</div><div class="sub">Every muscle is trained at least twice a week with enough sets to grow, rest is long enough to lift well, and endurance plans use heavier leg work.</div></div></div>
- <div class="li"><div><div class="nm">More than one goal</div><div class="sub">Keep your main goal and add up to two more, like getting stronger while losing fat.</div></div></div></div>
- <p class="hint">Your history, records and working weights haven't changed. Your previous plan is saved under Plan, then Plans, as "${H(old.name)}".</p>
- <button class="btn pri full" onclick="closeSheet();go('plan')">See my new plan</button>
- <button class="btn sec full" onclick="closeSheet();WIZ=newWiz(true);WIZ.step=STEPS.indexOf('goal');WIZ.only=1;render();scrollTo(0,0)">Add another goal</button>
- <button class="btn ghost full" onclick="usePlan('${old.id}')">Go back to my previous plan</button></div>`)}
+function newsCheck(){NEWSQ=0;if(!ST||DEMO||WIZ||ACT||VIEW=='workout'||!$('#sheet').hidden)return;
+ if((ST.settings.news||0)<NEWS){ST.settings.news=NEWS;tour(0);return}
+ if(ST.settings.newsStep!=null)tour(ST.settings.newsStep)}
+// a short walkthrough: goals first (they shape the plan), then the plan. Nothing changes unless they choose it.
+function tour(st){ST.settings.newsStep=st;persist('core');let h='';const step=(n,t)=>`<div class="eyebrow">${n} of 2: ${t}</div>`;
+ if(st==0)h=`<div><div class="eyebrow">Overload update</div><h2>Two things are new</h2></div>
+  <div class="list"><div class="li"><div><div class="nm">More than one goal</div><div class="sub">Keep your main goal and add up to two more, like getting stronger while losing fat.</div></div></div>
+  <div class="li"><div><div class="nm">Plans follow the research more closely</div><div class="sub">Every muscle trained at least twice a week with enough sets to grow, enough rest to lift well, and heavier leg work for endurance.</div></div></div></div>
+  <p class="hint">Nothing changes unless you choose it. Your history, records and weights stay as they are.</p>
+  <button class="btn pri full" onclick="tour(1)">Go through it</button>`;
+ if(st==1){const gs=gStat(),A=ST.goal.also||[];
+  h=`<div>${step(1,'Goals')}<h2>Add another goal?</h2></div><p class="mut">Your main goal still shapes the plan. Extra goals adjust it, for example adding cardio for fat loss or heavier main lifts for strength.</p>
+  <div class="list"><div class="li"><div><div class="sub">Main goal</div><div class="nm">${H((gs?.title||GT[ST.goal.type][0]).replace(': ',' to '))}</div></div></div>${A.map(a=>`<div class="li"><div><div class="sub">Also</div><div class="nm">${H((gStat(a)?.title||GT[a.type][0]).replace(': ',' to '))}</div></div></div>`).join('')}</div>
+  <button class="btn pri full" onclick="tourGoal()">${A.length?'Change my goals':'Add a goal'}</button><button class="btn sec full" onclick="tour(2)">Keep my goals</button>`}
+ if(st==2)h=`<div>${step(2,'Your plan')}<h2>Build a new plan?</h2></div><p class="mut">A new plan uses the updated rules and ${(ST.goal.also||[]).length?'all of your goals':'your goal'}. Lifts you do as a build-up stay that way.</p>
+  <p class="hint">Your current plan, "${H(ST.plan.name)}", is kept under Plan, then Plans, so you can switch back any time.</p>
+  <button class="btn pri full" onclick="tourBuild()">Build my new plan</button><button class="btn sec full" onclick="tour(3)">Keep my current plan</button>`;
+ if(st==3)h=`<div><h2>All set</h2></div><p class="mut">${ST.settings.tourBuilt?'Your new plan is ready on the Plan tab.':'Your plan is unchanged.'} You can change your goals any time in Me, and switch plans in Plan, then Plans.</p>
+  <button class="btn pri full" onclick="tourDone()">Done</button>`;
+ openSheet(`<div class="stack">${h}</div>`);UI.lock=1}
+function tourGoal(){ST.settings.newsStep=2;persist('core');UI.lock=0;closeSheet();WIZ=newWiz(true);WIZ.step=STEPS.indexOf('goal');WIZ.only=1;render();scrollTo(0,0)}
+function tourBuild(){const old=clone(ST.plan),pl=buildPlan(ST.profile,ST.goal);keepRamp(pl);pl.id=ST.plan.id;pl.name=old.auto?'Built for you':old.name;old.id=uid();old.name=(old.name||'Plan')+' (before update)';
+ ST.shelf.unshift(old);ST.plan=pl;ST.settings.tourBuilt=1;ensureLifts();persist('core');render();tour(3)}
+function tourDone(){const built=ST.settings.tourBuilt;delete ST.settings.newsStep;delete ST.settings.tourBuilt;persist('core');UI.lock=0;closeSheet();go(built?'plan':'today')}
 
 function newActive(di){const day=ST.plan.days[di];return{id:uid(),day:di,n:day.n,start:Date.now(),
  items:day.items.map((it,pi)=>{const t=dlAdjust(it,targetFor(it));return{...clone(it),pi,t,wu:warmFor(it,t),sets:t.sets.map(x=>({w:x.w,r:x.r,done:0}))}}),
