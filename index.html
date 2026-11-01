@@ -1297,9 +1297,17 @@ const EXP={beg:['Beginner','Under a year of regular lifting'],int:['Intermediate
 
 // ---------- plan templates ----------
 const TPL={
- fa:{n:'Full body A',s:[['squat',0,1],['hpush',0,1],['hpull',0],['lunge',0],['delt',0],['core',0]]},
- fb:{n:'Full body B',s:[['hinge',0,1],['vpush',0,1],['vpull',0],['ham',0],['bi',0],['tri',0],['core',1]]},
- fc:{n:'Full body C',s:[['squat',1,1],['ipush',0,1],['vpull',1],['hinge',1],['calf',0],['core',0]]},
+ fa:{n:'Full body A',s:[['squat',0,1],['hpush',0,1],['hpull',0],['ham',0],['delt',0],['tri',0],['core',0]]},
+ fb:{n:'Full body B',s:[['hinge',0,1],['vpush',0,1],['vpull',0],['lunge',0],['ipush',0],['bi',0],['calf',0]]},
+ fc:{n:'Full body C',s:[['squat',1,1],['hpush',1,1],['vpull',1],['hinge',1],['fly',0],['delt',1],['core',1]]},
+ sa:{n:'Full body A',s:[['squat',0,1],['hpush',0,1],['hpull',0],['ham',0],['delt',0],['core',0]]},
+ sb:{n:'Full body B',s:[['hinge',0,1],['vpush',0,1],['vpull',0],['lunge',0],['bi',0],['tri',0]]},
+ sc:{n:'Full body C',s:[['squat',0,1],['hpush',0,1],['hpull',1],['hinge',1],['calf',0],['core',1]]},
+ ta:{n:'Full body A',s:[['squat',0,1],['hpush',0,1],['hpull',0],['hinge',1],['delt',0],['bi',0],['calf',0],['core',0]]},
+ tb:{n:'Full body B',s:[['hinge',0,1],['vpush',0,1],['vpull',0],['hpush',1],['lunge',0],['tri',0],['ham',0],['core',1]]},
+ ea:{n:'Strength A',s:[['squat',0,1],['hinge',1,1],['lunge',0],['hpull',0],['calf',0],['core',0]]},
+ eb:{n:'Strength B',s:[['hinge',0,1],['squat',1,1],['lunge',1],['hpush',0],['calf',0],['core',1]]},
+ ec:{n:'Upper and core',s:[['hpull',0,1],['hpush',0,1],['vpull',0],['core',0],['core',1],['delt',1]]},
  ua:{n:'Upper A',s:[['hpush',0,1],['hpull',0,1],['vpush',1],['vpull',0],['fly',0],['delt',0],['bi',0],['tri',0]]},
  ub:{n:'Upper B',s:[['vpush',0,1],['vpull',0,1],['ipush',0],['hpull',1],['delt',1],['tri',1],['bi',1]]},
  la:{n:'Lower A',s:[['squat',0,1],['hinge',1],['lunge',0],['ham',0],['calf',0],['core',0]]},
@@ -1308,22 +1316,24 @@ const TPL={
  pl:{n:'Pull',s:[['vpull',0,1],['hpull',0],['hpull',1],['delt',1],['bi',0],['bi',1]]},
  lg:{n:'Legs',s:[['squat',0,1],['hinge',1],['lunge',0],['ham',0],['calf',0],['core',0]]}};
 // sets, rep min, rep max, rest seconds; c = cardio minutes per session
-const SCH={strength:{m:[5,3,5,180],a:[3,6,10,120],c:0},muscle:{m:[4,6,10,150],a:[3,10,15,75],c:0},fatloss:{m:[3,8,12,90],a:[3,12,15,45],c:12},endurance:{m:[3,10,15,60],a:[2,15,20,45],c:25},general:{m:[3,6,10,120],a:[3,10,12,60],c:8}};
+const SCH={strength:{m:[5,3,5,180],a:[3,6,10,120],c:0},muscle:{m:[4,6,10,150],a:[3,10,15,75],c:0},fatloss:{m:[3,6,10,120],a:[3,10,12,75],c:12},endurance:{m:[3,4,6,150],a:[3,8,12,75],c:20},general:{m:[3,6,10,120],a:[3,10,12,60],c:8}};
 
 const hasEq=(p,eq)=>!eq||eq.split('|').some(g=>g.split('+').every(k=>p.equip.includes(k)));
 const eligible=(pat,p)=>LIB.filter(e=>e.p==pat&&hasEq(p,e.eq)&&!(e.nb&&p.equip.includes('bench'))&&!e.av.some(a=>p.limits.includes(a))&&!(p.blocked||[]).includes(e.id));
 function pick(pat,v,used,p){const lv={beg:0,int:1,adv:2}[p.exp]??1,lvOK=e=>!e.lvl||e.lvl<=lv;const FB={vpull:'hpull',vpush:'hpush',ipush:'hpush',quad:'lunge',ham:'hinge',lunge:'squat'};
  let L=eligible(pat,p).filter(e=>!used.has(e.id)&&lvOK(e));if(!L.length&&FB[pat])L=eligible(FB[pat],p).filter(e=>!used.has(e.id)&&lvOK(e));
  return L.length?L[v%L.length]:null}
-function splitKeys(p,g){const d=+p.days;if(d<=2)return['fa','fb'];
- if(d==3)return(p.exp!='beg'&&['strength','muscle'].includes(g.type))?['pu','pl','lg']:['fa','fb','fc'];
+function splitKeys(p,g){const d=+p.days;
+ if(g.type=='endurance')return(d<=2?['ea','eb']:['ea','ec','eb','ec','ea','ec']).slice(0,Math.max(1,d));
+ if(d<=2)return['ta','tb'];
+ if(d==3)return g.type=='strength'?['sa','sb','sc']:['fa','fb','fc'];
  if(d==4)return['ua','la','ub','lb'];if(d==5)return['ua','la','pu','pl','lg'];return['pu','pl','lg','pu','pl','lg']}
 function mkItem(ex,main,g,p){let [s,a,b,r]=(SCH[g.type]||SCH.general)[main?'m':'a'];
  if(p.exp=='beg'&&main)s=Math.max(3,s-1);
- if(+p.mins<=45){s=Math.max(main?3:2,s-1);r=Math.round(r*.8)}
+ if(+p.mins<=45){if(s>3)s--;r=Math.max(main?90:60,Math.round(r*.85))}
  if(!ex.r){a=Math.max(a,8);b=Math.max(b,15)}
  if(ex.t){a=30;b=60;r=Math.min(r,60)}
- return{ex:ex.id,s,a,b,r,m:main?1:0}}
+ const it={ex:ex.id,s,a,b,r,m:main?1:0};if(main&&ex.r)it.st='straight';return it}
 const itemMin=it=>it.s*(it.r+(EX[it.ex].t?it.b:40))/60+(it.m?3:0);
 const dayMin=d=>Math.round(d.items.reduce((a,it)=>a+itemMin(it),0)+(d.cardio?d.cardio.min:0)+5);
 const cardioPick=(p,g)=>(g.type=='endurance'&&g.cardio)?g.cardio:(['row','bike','tread'].find(k=>p.equip.includes(k))||'run');
@@ -2096,6 +2106,7 @@ function planHTML(){const days=ST.plan.days,ni=days.length?ST.plan.next%days.len
     h+=`<button class="pli${sc}" onclick="itemSheet(${di},${i})"><span class="th" aria-hidden="true">${figSVG(it.ex)}</span><div style="min-width:0"><div class="n">${ex.n}${it.m?'<i class="dotm" title="Main lift"></i>':''}</div><div class="s">${isRamp(it)?(L&&L.pat?L.pat.length:it.s)+' sets building up':it.s+' sets'}, ${it.a}–${it.b} ${ex.t?'sec':'reps'}, rest ${mmss(it.r)}${g?`<span class="tag" style="color:var(--blue)">Superset ${g.lt}${g.n}</span>`:''}</div></div>${wkLbl(L?L.w:0,ex)}</button>`});
    if(d.cardio)h+=`<div class="pli"><span></span><div class="n">${CARDIO[d.cardio.type][0]}</div><span class="big-w">${d.cardio.min}<small>min</small></span></div>`;h+='</div>'}
   h+=`<button class="addx" onclick="addExSheet('${di}')"><i>+</i>Add exercise</button></section>`});
+ if(days.some(d=>d.items.length)&&!days.some(d=>d.items.some(it=>musc(it.ex).p.includes('lats'))))h+=`<section class="card"><h3>No lat work in this plan</h3><p class="hint" style="margin-top:8px">Nothing here trains your lats, the big muscles down the sides of your back${days.some(d=>d.items.some(it=>musc(it.ex).p.includes('biceps')))?'':', or your biceps'}. Your equipment doesn't allow pull-ups or pulldowns. A doorway pull-up bar or a set of resistance bands would cover it: add it under Me, then rebuild the plan.</p></section>`;
  h+=`<button class="btn full dash" style="margin:20px 0" onclick="addDay()">Add a day</button>
  <section class="card"><h3>How the plan pushes you</h3><p class="hint" style="margin-top:8px">Each exercise has a rep range. When you hit the top of the range on every set (or on your top set, for build-up lifts), the weight goes up next time. Build-up lifts copy the pattern you actually lift, so if you go 60, 80, 80, 90 the next session ramps the same way to the new top weight. Miss the bottom of the range twice in a row and it drops 10% so you can build back. Bodyweight moves raise the rep range instead. If you tell it how the last set felt, an easy set earns a bigger jump and a hard one holds the weight for one more session.</p>
   ${ST.plan.auto?`<button class="btn sec full" style="margin-top:14px" onclick="rebuildAsk()">Rebuild plan from my profile</button>`:''}</section></div>`;
